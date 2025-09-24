@@ -2,12 +2,21 @@
 
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\ControlleurPrincipal;
 
-Route::get('/', [ControlleurPrincipal::class, 'pageAcueil']);
-Route::get('/Mentions_Legals', [ControlleurPrincipal::class, 'pageMentions']);
+Route::view ('/', 'acueil');
 
-Route::get('/welcome', function () {
-    return view('welcome');
-});
+Route::view ('/acueil', 'acueil');
 
+Route::view ('/Mentions_Legals', 'mentions');
+
+Route::view('/welcome', 'welcome');
+
+Route::view('dashboard', 'dashboard')
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
+
+Route::view('profile', 'profile')
+    ->middleware(['auth'])
+    ->name('profile');
+
+require __DIR__.'/auth.php';
