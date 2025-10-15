@@ -17,7 +17,7 @@
   <aside class="aside">
     <nav class="navigation" role="navigation">
       <ul class="navigation-list">
-        <li class="navigation-item"><a class="navigation-link" href="">Acueil</a></li>
+        <li class="navigation-item"><a class="navigation-link" href="acueil">Acueil</a></li>
         <li class="navigation-item"><a class="navigation-link" href="">Concours</a></li>
         <li class="navigation-item"><a class="navigation-link" href="">Participants</a></li>
         <li class="navigation-item"><a class="navigation-link" href="">Épreuves</a></li>

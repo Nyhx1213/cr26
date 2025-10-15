@@ -1,13 +1,25 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ControlleurPrincipal;
+use App\Http\Controllers\ControlleurAdministrateur;
+use Illuminate\View\View;
 
+Route::get('/', [ControlleurPrincipal::class, 'pageAccueil']);
 
-Route::view ('/', 'acueil');
+Route::get('/accueil', [ControlleurPrincipal::class, 'pageAccueil']);
 
-Route::view ('/acueil', 'acueil');
+Route::get('/mentions_Legals', [ControlleurPrincipal::class, 'pageMentions']); 
 
-Route::view ('/Mentions_Legals', 'mentions');
+Route::get('/administrateur-affichage', [ControlleurAdministrateur::class, 'page_AffichageUtils']);
+
+Route::get('/administrateur-detail', [ControlleurAdministrateur::class, 'page_DetailUtil']);
+
+Route::get('/administrateur-suppression', [ControlleurAdministrateur::class, 'page_SuppUtil']);
+
+Route::get('/administrateur-modification', [ControlleurAdministrateur::class, 'page_ModifUtil']);
+
+Route::get('/administrateur-creation', [ControlleurAdministrateur::class, 'page_CreationUtil']);
 
 Route::view('/welcome', 'welcome');
 

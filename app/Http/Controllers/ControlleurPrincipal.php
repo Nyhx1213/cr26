@@ -7,11 +7,11 @@ use Illuminate\View\View;
 
 class ControlleurPrincipal extends Controller
 {
-    function pageAcueil() {
-        return view('acueil');
+    function pageAccueil() {
+        return view('pages.accueil');
     }
     
     function pageMentions() {
-        return view('mentions');
+        return view('pages.mentions');
     }
 }
