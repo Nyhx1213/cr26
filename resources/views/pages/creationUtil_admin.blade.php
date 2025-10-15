@@ -4,21 +4,22 @@
 <h1> Géneration de compte </h1>
 
 <div class="frame"> 
-<form wire:submit="ajouterUtil">
-    <label for="prenom"> Prénom : </label>
-    <input type="text" wire:model="prenom" required>
-    <!-- "name" est le nom de la personne -->
-    <label for="name"> Nom : </label> 
-    <input type="text" wire:model="prenom" required> 
-    <label for="mail"> Adresse Mail : </label>
-    <input type="email" wire:model="mail" required>
-    <label for="role"> Rôle : </label>
-    <select wire:model="role" id="role" required> 
-    @foreach ($roles as $role)
-        <option value="{{ $role->id }}"> {{ $role->nom }}</option>
-    @endforeach
-    </select>
-    <input type="submit" value="Valider">
-</form>
+    <form action="{{ route('pages.ajouterUtil') }}" method="post">
+        @csrf
+        <label for="prenom"> Prénom : </label>
+        <input type="text" name="prenom" required>
+        <!-- "name" est le nom de la personne -->
+        <label for="name"> Nom : </label> 
+        <input type="text" name="name" required> 
+        <label for="email"> Adresse Mail : </label>
+        <input type="email" name="email" required>
+        <label for="role"> Rôle : </label>
+        <select name="role" id="role" required> 
+        @foreach ($roles as $role)
+            <option value="{{ $role->id }}"> {{ $role->nom }}</option>
+        @endforeach
+        </select>
+        <input type="submit" value="Valider">
+    </form>
 </div>
 @stop

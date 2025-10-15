@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
+use Illuminate\Support\Str;
 
 
 class ControlleurAdministrateur extends Controller
@@ -52,40 +53,41 @@ class ControlleurAdministrateur extends Controller
     public function ajouterUtil(Request $request)
     {
         //name => le nom de la personne
-        
         //Informations pour la table User
         $validerUser = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'string', 'confirmed', Rules\Password::defaults()],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class, 'email')],
+            'role' => ['required', 'integer']
         ]);
 
-        //Informations pour la table Utilisateur
-        $validerUtilisateur = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'prenom' => ['required', 'string', 'max:255'],
-            'role' => ['required', 'int']
-        ]);
 
-        $role = $validerUtilisateur->role;
+        $role = $validerUser['role'];
+        $request['password'] = Str::random(16);
+        $validerUser['password'] = Hash::make($validerUser['password']);
 
-        $request['password'] = Hash::make($validated['password']);
-
-        if($role->belongsTo(Role::class, 'id_role')){
-            event(new Registered($user = User::create($validated)));
-
+        if (Role::find($validerUser['role']))
+        {
+            User::create([
+                'name' => $validerUser['name'],
+                'email' => $validerUser['email'],
+                'password' => $validerUser['password']
+            ]);
+            
+            event(new Registered($user));
+            
             Utilisateur::create([
                 'id' => $user->id,
-                'nom' => $validerUtilisateur->name,
-                'prenom' => $validerUtilisater->prenom
+                'nom' => $validerUser['name'],
+                'prenom' => $validerUser['prenom']
             ]);
 
             Engager::create([
                 'id_utilisateur' => $user->id,
-                'id_role' => $role
+                'id_role' => $validerUser['role']
             ]);
+            return redirect()->route(page_CreationUtil())
+            ->with('success', 'Post created successfully.');
         }
-
     }
 
 }
