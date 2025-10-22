@@ -4,7 +4,7 @@
 <h1> Géneration de compte </h1>
 
 <div class="frame"> 
-    <form action="{{ route('administrateur.ajouterUtil') }}" method="post">
+    <form action="{{ route('administrateur.ajouter_util') }}" method="post">
         @csrf
         <label for="prenom"> Prénom : </label>
         <input type="text" name="prenom" required>

@@ -19,17 +19,17 @@
       <th> <a href="test?tri=role">Rôle</a> </th>
       <th> Détail </th>
     </tr>
-    @foreach ($lesUtilisateurs as $utilisateur)
+    @foreach ($les_utilisateurs as $utilisateur)
     <tr>
       <td> {{ $utilisateur->nom }}</td> 
       <td> {{ $utilisateur->prenom }}</td>
       <td> {{ $utilisateur->email }} </td>
       <td> {{ $utilisateur->role ?? 'Aucun' }}</td>
-      <td> <a href="{{ route('administrateur.detailUtil', $utilisateur->id) }}"> Détail </td> 
+      <td> <a href="{{ route('administrateur.detail_util', $utilisateur->id) }}"> Détail </td> 
     </tr>
     @endforeach
   </table>
 <!-- élement qui permet de choisir la page, les pages s'adapt apropos du nombre d'utilisateurs.  -->
-  <p>{{ $lesUtilisateurs->links() }} </p> 
+  <p>{{ $les_utilisateurs->links() }} </p> 
 
 @stop

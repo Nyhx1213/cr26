@@ -8,23 +8,23 @@ use Illuminate\Support\Facades\URL;
 
 //URL::forceScheme('https');
 
-Route::get('/', [ControlleurPrincipal::class, 'pageAccueil']);
+Route::get('/', [ControlleurPrincipal::class, 'page_accueil']);
 
-Route::get('/accueil', [ControlleurPrincipal::class, 'pageAccueil']);
+Route::get('/accueil', [ControlleurPrincipal::class, 'page_accueil']);
 
-Route::get('/mentions_Legals', [ControlleurPrincipal::class, 'pageMentions']); 
+Route::get('/mentions_Legals', [ControlleurPrincipal::class, 'page_mentions']); 
 
-Route::get('/administrateur-affichage', [ControlleurAdministrateur::class, 'page_AffichageUtils'])->name('administrateur.affichageUtils');
+Route::get('/administrateur-affichage', [ControlleurAdministrateur::class, 'page_affichage_utils'])->name('administrateur.affichage_utils');
 
-Route::get('/administrateur-detail/{idUtil}', [ControlleurAdministrateur::class, 'page_DetailUtil'])->name('administrateur.detailUtil');
+Route::get('/administrateur-detail/{idUtil}', [ControlleurAdministrateur::class, 'page_detail_util'])->name('administrateur.detail_util');
 
-Route::get('/administrateur-suppression', [ControlleurAdministrateur::class, 'page_SuppUtil']);
+Route::put('/administrateur-modification/{idUtil}', [ControlleurAdministrateur::class, 'page_modif_util'])->name('administrateur.modification_util');
 
-Route::get('/administrateur-modification', [ControlleurAdministrateur::class, 'page_ModifUtil']);
+Route::get('/administrateur-creation', [ControlleurAdministrateur::class, 'page_creation_util'])->name('administrateur.creation_util');
 
-Route::get('/administrateur-creation', [ControlleurAdministrateur::class, 'page_CreationUtil'])->name('administrateur.creationUtil');
+Route::post('/administrateur-creation', [ControlleurAdministrateur::class, 'ajouter_util'])->name('administrateur.ajouter_util');
 
-Route::post('/administrateur-creation', [ControlleurAdministrateur::class, 'ajouterUtil'])->name('administrateur.ajouterUtil');
+Route::delete('/administrateur-detail/{idUtil}', [ControlleurAdministrateur::class, 'supprimer_util'])->name('administrateur.supprimer_util');
 
 Route::view('/welcome', 'welcome');
 

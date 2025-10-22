@@ -7,11 +7,14 @@ use Illuminate\View\View;
 use App\Models\Role;
 use App\Models\Concour;
 use App\Models\User;
+use App\Models\College;
+use App\Models\Equipe;
 use App\Models\Utilisateur;
 use App\Models\Genre;
 use App\Models\Engager;
 use App\Mail\MailInfoUtil;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -28,30 +31,99 @@ class ControlleurAdministrateur extends Controller
 ##     Affichage des pages des utilisateurs.
 ##
 
-    function page_AffichageUtils(){
-        $lesUtilisateurs = DB::table('users');
-        return view('administrateur.affichageUtil_admin', compact('lesUtilisateurs'));
+    function page_affichage_utils(){
+        $les_utilisateurs = DB::table('users')
+            ->join('utilisateurs', 'users.id', '=', 'utilisateurs.id')
+            ->join('engager','utilisateurs.id', '=', 'engager.id_utilisateur')
+            ->join('roles', 'engager.id_role', '=', 'roles.id')
+            ->select(
+                    'users.*',
+                    'utilisateurs.*',
+                    'engager.*',
+                    'roles.nom as role')// Select permet de renommer les valeurs des objets dans la collection.
+            ->orderBy('users.id')
+            ->paginate(30);
+
+        return view('administrateur.affichage_util_admin', compact('les_utilisateurs'));
     }
     
-    function page_DetailUtil($id){
-        $utilisateur = User::find($id);
-        return view('administrateur.detailUtil_admin', compact($id));
+    function page_detail_util($id){
+        if (User::find($id)){
+
+            $utilisateur = DB::Table('users')
+                ->join('utilisateurs', 'users.id', '=', 'utilisateurs.id')
+                ->leftJoin('engager','utilisateurs.id', '=', 'engager.id_utilisateur')
+                ->leftJoin('genres', 'utilisateurs.code_genre', '=', 'genres.code')
+                ->leftJoin('equipes', 'utilisateurs.id_equipe', '=', 'equipes.id')
+                ->leftJoin('colleges', 'utilisateurs.id_college', '=', 'colleges.id')
+                ->leftJoin('roles', 'engager.id_role', '=', 'roles.id')
+                ->where('users.id', '=', $id)
+                ->select('users.*',
+                        'utilisateurs.*',
+                        'utilisateurs.commentaire as commentaire_util',
+                        'equipes.nom as equipe',
+                        'colleges.nom as college',
+                        'roles.nom as role',
+                        'genres.nom as genre',
+                        'engager.*')
+                ->first();
+
+                $view = view('administrateur.detail_util_admin', compact('utilisateur'));
+        }
+        else{
+            $view = redirect()->route('administrateur.affichage_utils') 
+                ->with('Erreur', 'L\'utilisateur n\'existe pas'); //Ajouter un message d'erreur 
+        }
+        return $view;
     }
 
-    function page_SuppUtil(){
-        return view('administrateur.supprimerUtil_admin');
+
+    function page_modif_util($id){
+        if (User::find($id)){
+
+            $utilisateur = DB::Table('users')
+                ->join('utilisateurs', 'users.id', '=', 'utilisateurs.id')
+                ->leftJoin('engager','utilisateurs.id', '=', 'engager.id_utilisateur')
+                ->leftJoin('genres', 'utilisateurs.code_genre', '=', 'genres.code')
+                ->leftJoin('equipes', 'utilisateurs.id_equipe', '=', 'equipes.id')
+                ->leftJoin('colleges', 'utilisateurs.id_college', '=', 'colleges.id')
+                ->leftJoin('roles', 'engager.id_role', '=', 'roles.id')
+                ->where('users.id', '=', $id)
+                ->select('users.*',
+                        'utilisateurs.*',
+                        'utilisateurs.commentaire as commentaire_util',
+                        'equipes.nom as nom_equipe',
+                        'equipes.id as id_equipe',
+                        'colleges.id as id_college', 
+                        'colleges.nom as nom_college',
+                        'roles.id as id_role',
+                        'roles.nom as nom_role',
+                        'genres.code as code_genre',
+                        'genres.nom as nom_genre',
+                        )
+                ->first();
+
+                $les_roles = Role::all();
+                $les_colleges = College::all();
+                $les_equipes = Equipe::all();
+                $les_genres = Genre::all();
+
+                $view = view('administrateur.modification_util_admin', compact('utilisateur', 'les_roles', 'les_colleges', 
+                                                                        'les_equipes', 'les_genres'));
+        }
+        else{
+            $view = redirect()->route('administrateur.affichage_utils') 
+                ->with('Erreur', 'L\'utilisateur n\'existe pas'); //Ajouter un message d'erreur 
+        }
+        return $view;
     }
 
-    function page_ModifUtil(){
-        return view('administrateur.modificationUtil_admin');
-    }
-
-    function page_CreationUtil(){
+    function page_creation_util(){
         //Retourne un objet contenant tout les rôles
         $genres = Genre::all();
         $roles = Role::all();
         $concours = Concour::all();
-        return view('administrateur.creationUtil_admin', compact('roles', 'genres', 'concours'));
+        return view('administrateur.creation_util_admin', compact('roles', 'genres', 'concours'));
     }
 
 ##
@@ -59,7 +131,7 @@ class ControlleurAdministrateur extends Controller
 ##
 
     //Géneration d'utilisateur 
-    public function ajouterUtil(Request $request)
+    function ajouter_util(Request $request)
     {
         //name => le nom de la personne
         //Informations pour la table User
@@ -110,9 +182,28 @@ class ControlleurAdministrateur extends Controller
 
             Mail::to($user->email)->send(new MailInfoUtil($user, $motdepasseEnClaire));
             
-            return redirect()->route('administrateur.creationUtil')
-            ->with('success', 'Utilisateur créé et email envoyé');
+            return redirect()->route('administrateur.creation_util')
+                ->with('success', 'Utilisateur créé et email envoyé');
         }
+    }
+
+    function supprimer_util($id){
+        if(User::find($id)){
+
+            DB::table('scorer')->where('id_secretaire', '=', $id)->delete();
+            DB::table('engager')->where('id_utilisateur', '=', $id)->delete();
+            DB::table('utilisateurs')->where('id', '=', $id)->delete();
+            DB::table('users')->where('id', '=', $id)->delete();
+            
+            $view = redirect()->route('administrateur.affichage_utils')
+            ->with('success', 'Utilisateur supprimer');
+        }
+        else {
+            $view = redirect()->route('administrateur.affichage_utils')
+            ->with('Erreur', 'L\'utilisateur n\'a pas été supprimer');
+        }
+            
+        return $view;
     }
 
 }
