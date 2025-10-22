@@ -5,12 +5,17 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use App\Models\Role;
+use App\Models\Concour;
 use App\Models\User;
 use App\Models\Utilisateur;
+use App\Models\Genre;
+use App\Models\Engager;
+use App\Mail\MailInfoUtil;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules;
+use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
 use Illuminate\Support\Str;
@@ -24,25 +29,29 @@ class ControlleurAdministrateur extends Controller
 ##
 
     function page_AffichageUtils(){
-        return view('pages.affichageUtil_admin');
+        $lesUtilisateurs = DB::table('users');
+        return view('administrateur.affichageUtil_admin', compact('lesUtilisateurs'));
     }
     
-    function page_DetailUtil(){
-        return view('pages.detailUtil_admin');
+    function page_DetailUtil($id){
+        $utilisateur = User::find($id);
+        return view('administrateur.detailUtil_admin', compact($id));
     }
 
     function page_SuppUtil(){
-        return view('pages.supprimerUtil_admin');
+        return view('administrateur.supprimerUtil_admin');
     }
 
     function page_ModifUtil(){
-        return view('pages.modificationUtil_admin');
+        return view('administrateur.modificationUtil_admin');
     }
 
     function page_CreationUtil(){
         //Retourne un objet contenant tout les rôles
+        $genres = Genre::all();
         $roles = Role::all();
-        return view('pages.creationUtil_admin', compact('roles'));
+        $concours = Concour::all();
+        return view('administrateur.creationUtil_admin', compact('roles', 'genres', 'concours'));
     }
 
 ##
@@ -57,18 +66,27 @@ class ControlleurAdministrateur extends Controller
         $validerUser = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class, 'email')],
-            'role' => ['required', 'integer']
+            'role' => ['required', 'integer'],
+            'prenom' => ['required', 'string', 'max:255'],
+            'genre' => ['required', 'string', 'max:1'],
+            'concour' => ['required', 'integer']
         ]);
 
+        $motdepasseEnClaire = Str::random(16);
+        $request['password'] = $motdepasseEnClaire;
+        $validerUser['password'] = Hash::make($request['password']);
 
-        $role = $validerUser['role'];
-        $request['password'] = Str::random(16);
-        $validerUser['password'] = Hash::make($validerUser['password']);
-
-        if (Role::find($validerUser['role']))
+        if (Role::find($validerUser['role']) && Genre::find($validerUser['genre']) && Concour::find($validerUser['concour']))
         {
-            User::create([
-                'name' => $validerUser['name'],
+            if(strlen($validerUser['prenom']) >= 3){
+                $nameUser = $validerUser['prenom'][0].$validerUser['prenom'][1].$validerUser['prenom'][2];
+            }
+            else{
+                $nameUser = $validerUser['prenom'];
+            }
+
+           $user = User::create([
+                'name' => $nameUser.'.'.$validerUser['name'],
                 'email' => $validerUser['email'],
                 'password' => $validerUser['password']
             ]);
@@ -78,15 +96,22 @@ class ControlleurAdministrateur extends Controller
             Utilisateur::create([
                 'id' => $user->id,
                 'nom' => $validerUser['name'],
-                'prenom' => $validerUser['prenom']
+                'prenom' => $validerUser['prenom'],
+                'code_statut' => 'N',
+                'code_genre' => $validerUser['genre']
             ]);
 
             Engager::create([
                 'id_utilisateur' => $user->id,
-                'id_role' => $validerUser['role']
+                'id_role' => $validerUser['role'],
+                'id_concours' => $validerUser['concour']
+                //Ajouter un concours ??? )(problématic dans certain cas à voir avec monsieur henry)
             ]);
-            return redirect()->route(page_CreationUtil())
-            ->with('success', 'Post created successfully.');
+
+            Mail::to($user->email)->send(new MailInfoUtil($user, $motdepasseEnClaire));
+            
+            return redirect()->route('administrateur.creationUtil')
+            ->with('success', 'Utilisateur créé et email envoyé');
         }
     }
 

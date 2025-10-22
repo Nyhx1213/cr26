@@ -7,7 +7,9 @@ use App\Models\Base\Engager as BaseEngager;
 class Engager extends BaseEngager
 {
 	protected $fillable = [
+		'id_utilisateur',
 		'commentaire',
-		'id_role'
+		'id_role',
+		'id_concours'
 	];
 }
