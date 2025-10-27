@@ -15,15 +15,15 @@
     <p> Commentaire : {{ $utilisateur->commentaireUtil ?? ''}} </p> 
   </div>
   <div class="positionButtonsDetail">
-    <form action="{{ route('administrateur.supprimer_util', $utilisateur->id) }}" method="post">
+    <form action="{{ route('administrateur.supprimer_util', $utilisateur->id) }}" method="POST">
       @csrf 
       @method('DELETE')
       <button type="submit">Supprimer</button>
     </form>
-    <form action=" {{ route('administrateur.modification_util', $utilisateur->id) }} " method="POST">
-      @csrf
-      @method('PUT')
-      <button type="submit"> Modifier </button>
-    </form>
+
+<a href="{{ route('administrateur.modification_util', $utilisateur->id) }}">
+    <button type="button">Modifier</button>
+</a>
+
   </div>
 @stop

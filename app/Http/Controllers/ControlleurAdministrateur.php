@@ -13,6 +13,8 @@ use App\Models\Utilisateur;
 use App\Models\Genre;
 use App\Models\Engager;
 use App\Mail\MailInfoUtil;
+use App\Mail\ModificationUtil;
+use App\Requetes\RequeteSupport;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Auth\Events\Registered;
@@ -88,6 +90,7 @@ class ControlleurAdministrateur extends Controller
                 ->leftJoin('equipes', 'utilisateurs.id_equipe', '=', 'equipes.id')
                 ->leftJoin('colleges', 'utilisateurs.id_college', '=', 'colleges.id')
                 ->leftJoin('roles', 'engager.id_role', '=', 'roles.id')
+                ->leftJoin('concours', 'engager.id_concourS', '=', 'concours.id')
                 ->where('users.id', '=', $id)
                 ->select('users.*',
                         'utilisateurs.*',
@@ -98,18 +101,20 @@ class ControlleurAdministrateur extends Controller
                         'colleges.nom as nom_college',
                         'roles.id as id_role',
                         'roles.nom as nom_role',
+                        'concours.id as id_concour',
                         'genres.code as code_genre',
-                        'genres.nom as nom_genre',
+                        'genres.nom as nom_genre'
                         )
                 ->first();
 
+                $les_concours = Concour::all();
                 $les_roles = Role::all();
                 $les_colleges = College::all();
                 $les_equipes = Equipe::all();
                 $les_genres = Genre::all();
 
                 $view = view('administrateur.modification_util_admin', compact('utilisateur', 'les_roles', 'les_colleges', 
-                                                                        'les_equipes', 'les_genres'));
+                                                                        'les_equipes', 'les_genres', 'les_concours'));
         }
         else{
             $view = redirect()->route('administrateur.affichage_utils') 
@@ -150,15 +155,11 @@ class ControlleurAdministrateur extends Controller
 
         if (Role::find($validerUser['role']) && Genre::find($validerUser['genre']) && Concour::find($validerUser['concour']))
         {
-            if(strlen($validerUser['prenom']) >= 3){
-                $nameUser = $validerUser['prenom'][0].$validerUser['prenom'][1].$validerUser['prenom'][2];
-            }
-            else{
-                $nameUser = $validerUser['prenom'];
-            }
+            //Seulement utilsier les 3 premières lettres d'un prénom (sauf si le prénom est inférieur à 2 lettres de longeur)
+            $nameUser = RequeteSupport::generationNom($validerUser['name'], $validerUser['prenom']);
 
            $user = User::create([
-                'name' => $nameUser.'.'.$validerUser['name'],
+                'name' => $nameUser,
                 'email' => $validerUser['email'],
                 'password' => $validerUser['password']
             ]);
@@ -206,4 +207,61 @@ class ControlleurAdministrateur extends Controller
         return $view;
     }
 
+    function modification_util(Request $request, $idUtil){
+              //  dd($request->all());
+        $validerUser = $request->validate([
+            'nom' => ['required', 'string', 'max:255'],
+            'prenom' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class, 'email')->ignore($idUtil)],
+            'motdepasse' => ['string'],
+            'role' => ['required', 'integer'],
+            'genre' => ['required', 'string', 'max:1'],
+            'college' => ['integer'],
+            'commentaire' => ['string', 'max:1024'],
+            'concour' => ['required', 'integer']
+        ]);
+
+        if(User::find($idUtil))
+        {
+            $name = RequeteSupport::generationNom($validerUser['nom'], $validerUser['prenom']);
+            $informationsUser = [
+                "name" => $name,
+                "email" => $validerUser['email']
+            ];
+
+            if($validerUser['motdepasse'] == "on"){
+
+                $motdepasseEnClaire = Str::random(16);
+                $motdepasseHash = Hash::make($motdepasseEnClaire);
+                
+                $informationsUser['password'] = $motdepasseHash;
+
+                Mail::to($validerUser['email'])->send(new ModificationUtil($validerUser['email'], $motdepasseEnClaire));
+            }
+
+            DB::table('users')->where('id', $idUtil)
+                ->update($informationsUser);
+
+
+            DB::table('utilisateurs')->where('id', $idUtil)
+                ->update([
+                    'nom' => $validerUser['nom'], 
+                    'prenom' => $validerUser['prenom'],
+                    'commentaire' => $validerUser['commentaire'],
+                    'code_genre' => $validerUser['genre'],
+                    'id_college' => $validerUser['college'],
+                ]);
+                
+            DB::table('engager')->where('id_utilisateur', $idUtil)
+                ->update([
+                    'id_concours' => $validerUser['concour'],
+                    'id_role' => $validerUser['role']
+                ]);              
+        }
+        else {
+        return redirect()->route('administrateur.affichage_utils')
+        ->with('Erreur', 'L\'utilisateur n\'existe pas');
+}
+
+}
 }

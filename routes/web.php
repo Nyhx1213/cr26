@@ -18,7 +18,9 @@ Route::get('/administrateur-affichage', [ControlleurAdministrateur::class, 'page
 
 Route::get('/administrateur-detail/{idUtil}', [ControlleurAdministrateur::class, 'page_detail_util'])->name('administrateur.detail_util');
 
-Route::put('/administrateur-modification/{idUtil}', [ControlleurAdministrateur::class, 'page_modif_util'])->name('administrateur.modification_util');
+Route::get('/administrateur-modification/{idUtil}', [ControlleurAdministrateur::class, 'page_modif_util'])->name('administrateur.modification_util');
+
+Route::put('/administrateur-modification/{idUtil}', [ControlleurAdministrateur::class, 'modification_util'])->name('administrateur.action_modifier_util');
 
 Route::get('/administrateur-creation', [ControlleurAdministrateur::class, 'page_creation_util'])->name('administrateur.creation_util');
 
