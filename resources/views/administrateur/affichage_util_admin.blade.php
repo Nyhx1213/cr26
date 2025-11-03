@@ -12,6 +12,7 @@
 
 <!-- Tableau qui permet d'afficher et trier le contenu. -->
   <table>
+  <thead>
     <tr> 
       <th> <a href="test?tri=nom">Nom</a> </th>
       <th> <a href="test?tri=prenom">Prénom</a> </th>
@@ -19,6 +20,8 @@
       <th> <a href="test?tri=role">Rôle</a> </th>
       <th> Détail </th>
     </tr>
+  </thead>
+  <tbody>
     @foreach ($les_utilisateurs as $utilisateur)
     <tr>
       <td> {{ $utilisateur->nom }}</td> 
@@ -28,6 +31,7 @@
       <td> <a href="{{ route('administrateur.detail_util', $utilisateur->id) }}"> Détail </td> 
     </tr>
     @endforeach
+  </tbody>
   </table>
 <!-- élement qui permet de choisir la page, les pages s'adapt apropos du nombre d'utilisateurs.  -->
   <p>{{ $les_utilisateurs->links() }} </p> 
