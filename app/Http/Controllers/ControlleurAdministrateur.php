@@ -33,7 +33,8 @@ class ControlleurAdministrateur extends Controller
 ##     Affichage des pages des utilisateurs.
 ##
 
-    function page_affichage_utils(){
+    function page_affichage_utils()
+    {
         $les_utilisateurs = DB::table('users')
             ->join('utilisateurs', 'users.id', '=', 'utilisateurs.id')
             ->join('engager','utilisateurs.id', '=', 'engager.id_utilisateur')
@@ -49,7 +50,8 @@ class ControlleurAdministrateur extends Controller
         return view('administrateur.affichage_util_admin', compact('les_utilisateurs'));
     }
     
-    function page_detail_util($id){
+    function page_detail_util($id)
+    {
         if (User::find($id)){
 
             $utilisateur = DB::Table('users')
@@ -80,7 +82,8 @@ class ControlleurAdministrateur extends Controller
     }
 
 
-    function page_modif_util($id){
+    function page_modif_util($id)
+    {
         if (User::find($id)){
 
             $utilisateur = DB::Table('users')
@@ -123,7 +126,8 @@ class ControlleurAdministrateur extends Controller
         return $view;
     }
 
-    function page_creation_util(){
+    function page_creation_util()
+    {
         //Retourne un objet contenant tout les rôles
         $genres = Genre::all();
         $roles = Role::all();
@@ -153,8 +157,7 @@ class ControlleurAdministrateur extends Controller
         $request['password'] = $motdepasseEnClaire;
         $validerUser['password'] = Hash::make($request['password']);
 
-        if (Role::find($validerUser['role']) && Genre::find($validerUser['genre']) && Concour::find($validerUser['concour']))
-        {
+        if (Role::find($validerUser['role']) && Genre::find($validerUser['genre']) && Concour::find($validerUser['concour'])){
             //Seulement utilsier les 3 premières lettres d'un prénom (sauf si le prénom est inférieur à 2 lettres de longeur)
             $nameUser = RequeteSupport::generationNom($validerUser['name'], $validerUser['prenom']);
 
@@ -188,7 +191,8 @@ class ControlleurAdministrateur extends Controller
         }
     }
 
-    function supprimer_util($id){
+    function supprimer_util($id)
+    {
         if(User::find($id)){
 
             DB::table('scorer')->where('id_secretaire', '=', $id)->delete();
@@ -207,7 +211,8 @@ class ControlleurAdministrateur extends Controller
         return $view;
     }
 
-    function modification_util(Request $request, $idUtil){
+    function modification_util(Request $request, $idUtil)
+    {
               //  dd($request->all());
         $validerUser = $request->validate([
             'nom' => ['required', 'string', 'max:255'],
@@ -221,8 +226,7 @@ class ControlleurAdministrateur extends Controller
             'concour' => ['required', 'integer']
         ]);
 
-        if(User::find($idUtil))
-        {
+        if(User::find($idUtil)){
             $name = RequeteSupport::generationNom($validerUser['nom'], $validerUser['prenom']);
             $informationsUser = [
                 "name" => $name,
@@ -261,7 +265,6 @@ class ControlleurAdministrateur extends Controller
         else {
         return redirect()->route('administrateur.affichage_utils')
         ->with('Erreur', 'L\'utilisateur n\'existe pas');
-}
-
-}
+        }
+    }
 }
