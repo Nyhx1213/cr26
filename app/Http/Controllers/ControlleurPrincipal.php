@@ -8,10 +8,10 @@ use Illuminate\View\View;
 class ControlleurPrincipal extends Controller
 {
     function page_accueil() {
-        return view('administrateur.accueil');
+        return view('accueil');
     }
     
     function page_mentions() {
-        return view('administrateur.mentions');
+        return view('mentions');
     }
 }

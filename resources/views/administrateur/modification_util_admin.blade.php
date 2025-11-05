@@ -2,7 +2,7 @@
 
 @section('contenu')
 
-<h1> Modification de : </h1>
+<h1> Modification de {{ $utilisateur->prenom. ' ' . $utilisateur->nom }} </h1>
 
 <form action="{{ route('administrateur.action_modifier_util', $utilisateur->id) }}" method="POST">
     @csrf 
@@ -58,7 +58,10 @@
     </select>
     <label for="commentaire"> Commentaire :</label>
     <textarea name="commentaire" id="commentaire"> {{ $utilisateur->commentaire_util }}</textarea>
-    <input type="submit" name="submit">
+    <button type="submit" name="valider">Valider</button>
 </form>
+<a href="{{ route('administrateur.detail_util', $utilisateur->id) }}">
+    <button>Annuler</button>
+</a> 
 
 @stop

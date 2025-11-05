@@ -2,31 +2,30 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ControlleurPrincipal;
-use App\Http\Controllers\ControlleurAdministrateur;
+use App\Http\Controllers\UserController;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\URL;
+use App\Http\Middleware\IsAdmin;
 
 //URL::forceScheme('https');
 
-Route::get('/', [ControlleurPrincipal::class, 'page_accueil']);
-
-Route::get('/accueil', [ControlleurPrincipal::class, 'page_accueil']);
+Route::get('/', [ControlleurPrincipal::class, 'page_accueil'])->name('accueil');
 
 Route::get('/mentions_Legals', [ControlleurPrincipal::class, 'page_mentions']); 
 
-Route::get('/administrateur-affichage', [ControlleurAdministrateur::class, 'page_affichage_utils'])->name('administrateur.affichage_utils');
+Route::get('/Liste_Utilisateurs', [UserController::class, 'page_affichage_utils'])->name('administrateur.affichage_utils');//->middleware(IsAdmin::class);
 
-Route::get('/administrateur-detail/{idUtil}', [ControlleurAdministrateur::class, 'page_detail_util'])->name('administrateur.detail_util');
+Route::get('/Detail_Utilisateur/{idUtil}', [UserController::class, 'page_detail_util'])->name('administrateur.detail_util');//->middleware(IsAdmin::class);
 
-Route::get('/administrateur-modification/{idUtil}', [ControlleurAdministrateur::class, 'page_modif_util'])->name('administrateur.modification_util');
+Route::get('/Modification_Utilisateur/{idUtil}', [UserController::class, 'page_modif_util'])->name('administrateur.modification_util');//->middleware(IsAdmin::class);
 
-Route::put('/administrateur-modification/{idUtil}', [ControlleurAdministrateur::class, 'modification_util'])->name('administrateur.action_modifier_util');
+Route::put('/Modification_Utilisateur/{idUtil}', [UserController::class, 'modification_util'])->name('administrateur.action_modifier_util');//->middleware(IsAdmin::class);
 
-Route::get('/administrateur-creation', [ControlleurAdministrateur::class, 'page_creation_util'])->name('administrateur.creation_util');
+Route::get('/Genération_Utilisateur', [UserController::class, 'page_creation_util'])->name('administrateur.creation_util');//->middleware(IsAdmin::class);
 
-Route::post('/administrateur-creation', [ControlleurAdministrateur::class, 'ajouter_util'])->name('administrateur.ajouter_util');
+Route::post('/Genération_Utilisateur', [UserController::class, 'ajouter_util'])->name('administrateur.ajouter_util');//->middleware(IsAdmin::class);
 
-Route::delete('/administrateur-detail/{idUtil}', [ControlleurAdministrateur::class, 'supprimer_util'])->name('administrateur.supprimer_util');
+Route::delete('/Suprimmer_Utilisateur/{idUtil}', [UserController::class, 'supprimer_util'])->name('administrateur.supprimer_util');//->middleware(IsAdmin::class);
 
 Route::view('/welcome', 'welcome');
 

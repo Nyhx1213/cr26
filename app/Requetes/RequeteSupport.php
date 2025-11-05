@@ -13,7 +13,7 @@ class RequeteSupport
     public static function generationNom(string $nom, string $prenom)
     {
         if (strlen($prenom)  >= 3){
-            $nameUser = $prenom[0].$prenom[1].$prenom[2].$nom;
+            $nameUser = $prenom[0].$prenom[1].$prenom[2].".".$nom;
         }
         else{
             $nameUser = $prenom.".".$nom;
@@ -21,6 +21,17 @@ class RequeteSupport
         return $nameUser;
     }
 
+    public static function recupRole(int $idUser)
+    {
+        return DB::table('engager')
+                        ->join('roles', 'engager.id_role', '=', 'roles.id')
+                        ->where('engager.id_utilisateur', '=', $idUser)
+                        ->select(
+                            'roles.code'
+                        )
+                        ->first();
+    }
+    
     public static function updateUtil(int $idUtil, array $validerUser)
     {
         $name = self::generationNom($validerUser['nom'], $validerUser['prenom']);

@@ -4,7 +4,6 @@
   <h1> Détail de : </h1>
   
   <div class="detailUtil">
-    <p> Identifiant {{ $utilisateur->id}}: </p>
     <p> Nom : {{ $utilisateur->nom }} </p>
     <p> Prénom : {{ $utilisateur->prenom }} </p> 
     <p> Email : {{ $utilisateur->email }}</p>

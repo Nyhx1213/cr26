@@ -31,7 +31,14 @@
             <option value="{{ $role->id }}"> {{ $role->nom }}</option>
         @endforeach
         </select>
+        <select name="college" id="college"> 
+            <option value="" selected> Aucun </option>
+        @foreach ($colleges as $college) 
+            <option value="{{ $college->id }}"> {{ $college->nom.' - '.$college->adr_ville }}</option>
+        @endforeach
+        </select>
         <input type="submit" value="Valider">
     </form>
 </div>
+@endsection
 @stop
