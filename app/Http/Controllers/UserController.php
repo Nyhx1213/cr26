@@ -41,22 +41,11 @@ class UserController extends Controller
      * - engager : lien entre utilisateur et rôle
      * - roles : nom du rôle
      */
-    function page_affichage_utils()
+    function listeUtilisateurs()
     {
-        $les_utilisateurs = DB::table('users')
-            ->join('utilisateurs', 'users.id', '=', 'utilisateurs.id')
-            ->join('engager','utilisateurs.id', '=', 'engager.id_utilisateur')
-            ->join('roles', 'engager.id_role', '=', 'roles.id')
-            ->select(
-                'users.*',
-                'utilisateurs.*',
-                'engager.*',
-                'roles.nom as role'
-            )    
-            ->orderBy('users.id')
-            ->paginate(30);
+       $les_utilisateurs = User::listeUtilisateurs();
 
-        return view('administrateur.affichage_util_admin', compact('les_utilisateurs'));
+        return view('administrateur.listeUtilisateurs', compact('les_utilisateurs'));
     }
     
     /**
@@ -65,35 +54,17 @@ class UserController extends Controller
      * Rejoint plusieurs tables liées à l’utilisateur pour afficher
      * ses informations complètes (genre, équipe, collège, rôle, etc.).
      */
-    function page_detail_util($id)
+    function detailUtilisateur($id)
     {
         if (User::find($id)){
 
-            $utilisateur = DB::table('users')
-                ->join('utilisateurs', 'users.id', '=', 'utilisateurs.id')
-                ->leftJoin('engager','utilisateurs.id', '=', 'engager.id_utilisateur')
-                ->leftJoin('genres', 'utilisateurs.code_genre', '=', 'genres.code')
-                ->leftJoin('equipes', 'utilisateurs.id_equipe', '=', 'equipes.id')
-                ->leftJoin('colleges', 'utilisateurs.id_college', '=', 'colleges.id')
-                ->leftJoin('roles', 'engager.id_role', '=', 'roles.id')
-                ->where('users.id', '=', $id)
-                ->select(
-                    'users.*',
-                    'utilisateurs.*',
-                    'utilisateurs.commentaire as commentaire_util',
-                    'equipes.nom as equipe',
-                    'colleges.nom as college',
-                    'roles.nom as role',
-                    'genres.nom as genre',
-                    'engager.*'
-                )
-                ->first();
+            $utilisateur = User::detailUtilisateur($id);
 
-            $view = view('administrateur.detail_util_admin', compact('utilisateur'));
+            $view = view('administrateur.detailUtilisateur', compact('utilisateur'));
         }
         else {
             // Si l'utilisateur n'existe pas → redirection avec message d'erreur
-            $view = redirect()->route('administrateur.affichage_utils') 
+            $view = redirect()->route('administrateur.liste-utilisateurs') 
                 ->with('Erreur', 'L\'utilisateur n\'existe pas');
         }
         return $view;
@@ -105,35 +76,12 @@ class UserController extends Controller
      * Charge également les collections nécessaires pour les menus déroulants
      * (rôles, concours, collèges, équipes, genres...).
      */
-    function page_modif_util($id)
+    function formulaireModificationUtil($id)
     { 
         if (User::find($id)){
 
-            $utilisateur = DB::table('users')
-                ->join('utilisateurs', 'users.id', '=', 'utilisateurs.id')
-                ->leftJoin('engager','utilisateurs.id', '=', 'engager.id_utilisateur')
-                ->leftJoin('genres', 'utilisateurs.code_genre', '=', 'genres.code')
-                ->leftJoin('equipes', 'utilisateurs.id_equipe', '=', 'equipes.id')
-                ->leftJoin('colleges', 'utilisateurs.id_college', '=', 'colleges.id')
-                ->leftJoin('roles', 'engager.id_role', '=', 'roles.id')
-                ->leftJoin('concours', 'engager.id_concourS', '=', 'concours.id')
-                ->where('users.id', '=', $id)
-                ->select(
-                    'users.*',
-                    'utilisateurs.*',
-                    'utilisateurs.commentaire as commentaire_util',
-                    'equipes.nom as nom_equipe',
-                    'equipes.id as id_equipe',
-                    'colleges.id as id_college', 
-                    'colleges.nom as nom_college',
-                    'roles.id as id_role',
-                    'roles.nom as nom_role',
-                    'concours.id as id_concour',
-                    'genres.code as code_genre',
-                    'genres.nom as nom_genre'
-                )
-                ->first();
-
+            $utilisateur = User::formulaireModification($id);
+    
             // Chargement des listes pour le formulaire
             $les_concours = Concour::all();
             $les_roles = Role::all();
@@ -141,13 +89,13 @@ class UserController extends Controller
             $les_equipes = Equipe::all();
             $les_genres = Genre::all();
 
-            $view = view('administrateur.modification_util_admin', compact(
+            $view = view('administrateur.modificationUtilisateur', compact(
                 'utilisateur', 'les_roles', 'les_colleges', 
                 'les_equipes', 'les_genres', 'les_concours'
             ));
         }
         else {
-            $view = redirect()->route('administrateur.affichage_utils') 
+            $view = redirect()->route('administrateur.liste-utilisateurs') 
                 ->with('Erreur', 'L\'utilisateur n\'existe pas');
         }
         return $view;
@@ -159,13 +107,13 @@ class UserController extends Controller
      * Passe les listes de rôles, genres, concours et collèges
      * au formulaire pour les menus déroulants.
      */
-    function page_creation_util()
+    function formulaireGeneration()
     {
         $genres = Genre::all();
         $roles = Role::all();
         $concours = Concour::all();
         $colleges = College::all();
-        return view('administrateur.creation_util_admin', compact('roles', 'genres', 'concours', 'colleges'));
+        return view('administrateur.generationUtilisateur', compact('roles', 'genres', 'concours', 'colleges'));
     }
 
     ##
@@ -180,7 +128,7 @@ class UserController extends Controller
      * - Crée les entrées dans les tables users, utilisateurs et engager.
      * - Envoie un e-mail (actuellement désactivé).
      */
-    function ajouter_util(Request $request)
+    function ajouterUtilisateur(Request $request)
     {
         // Validation des champs du formulaire
         $validerUser = $request->validate([
@@ -194,8 +142,6 @@ class UserController extends Controller
 
         // Génération d’un mot de passe aléatoire (en clair pour l'instant)
         $motdepasseEnClaire = Str::random(16);
-        //$request['password'] = $motdepasseEnClaire;
-        //$validerUser['password'] = Hash::make($request['password']);
         $validerUser['password'] = Hash::make($motdepasseEnClaire);
 
 
@@ -234,11 +180,11 @@ class UserController extends Controller
             // Envoi de mail désactivé, à remplacer par un lien de réinitialisation
             // Mail::to($user->email)->send(new MailInfoUtil($user, $motdepasseEnClaire));
             
-            $view = redirect()->route('administrateur.creation_util')
+            $view = redirect()->route('administrateur.generation-utilisateur')
                 ->with('success', 'Utilisateur créé et email envoyé');
         }
         else {
-            $view = redirect()->route('administrateur.creation_util')
+            $view = redirect()->route('administrateur.generation-utilisateur')
                 ->with('error', 'Une erreur est survenue, veuillez contacter un administrateur.');
         }
         return $view;
@@ -253,22 +199,17 @@ class UserController extends Controller
      * - utilisateurs
      * - users
      */
-    function supprimer_util($id)
+    function suppressionUtilisateur($id)
     {
         if(User::find($id)){
             // Transaction : si une suppression échoue, tout est annulé
-            DB::transaction(function() use ($id) {
-                DB::table('scorer')->where('id_secretaire', '=', $id)->delete();
-                DB::table('engager')->where('id_utilisateur', '=', $id)->delete();
-                DB::table('utilisateurs')->where('id', '=', $id)->delete();
-                DB::table('users')->where('id', '=', $id)->delete();
-            });
-            
-            $view = redirect()->route('administrateur.affichage_utils')
+            User::supprimerUtil($id);
+
+            $view = redirect()->route('administrateur.liste-utilisateurs')
                 ->with('success', 'Utilisateur supprimé');
         }
         else {
-            $view = redirect()->route('administrateur.affichage_utils')
+            $view = redirect()->route('administrateur.detail-utilisateur', 'id')
                 ->with('Erreur', 'L\'utilisateur n\'a pas été supprimé');
         }
         return $view;
@@ -280,24 +221,19 @@ class UserController extends Controller
      * - Met à jour les données dans les trois tables principales.
      * - Si "motdepasse" = "on", régénère un mot de passe et le met à jour.
      */
-    function modification_util(Request $request, $idUtil)
-    {        
+    function modificationUtilisateur(Request $request, $idUtil)
+    {   
         $validerUser = $request->validate([
             'nom' => ['required', 'string', 'max:255'],
             'prenom' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class, 'email')->ignore($idUtil)],
-            'motdepasse' => ['string'],
+            'motdepasse' => ['string', 'nullable'],
             'role' => ['required', 'integer'],
             'genre' => ['required', 'string', 'max:1'],
-            'college' => ['integer'],
-            'commentaire' => ['string', 'max:1024'],
+            'college' => ['integer', 'nullable'],
+            'commentaire' => ['string', 'nullable', 'max:1024'],
             'concour' => ['required', 'integer']
         ]);
-        
-        // Si le champ motdepasse n'est pas coché
-        if (!$validerUser['motdepasse']){
-            $validerUser['motdepasse'] = "off";
-        }
 
         if(User::find($idUtil)){
             $name = RequeteSupport::generationNom($validerUser['nom'], $validerUser['prenom']);
@@ -309,7 +245,7 @@ class UserController extends Controller
             ];
 
             // Si le mot de passe doit être régénéré
-            if($validerUser['motdepasse'] == "on"){
+            if(isset($validerUser['motdepasse']) && $validerUser['motdepasse'] == "on"){
                 $motdepasseEnClaire = Str::random(16);
                 $motdepasseHash = Hash::make($motdepasseEnClaire);
                 $informationsUser['password'] = $motdepasseHash;
@@ -319,29 +255,14 @@ class UserController extends Controller
             }
 
             // Mise à jour des tables
-            DB::table('users')->where('id', $idUtil)
-                ->update($informationsUser);
 
-            DB::table('utilisateurs')->where('id', $idUtil)
-                ->update([
-                    'nom' => $validerUser['nom'], 
-                    'prenom' => $validerUser['prenom'],
-                    'commentaire' => $validerUser['commentaire'],
-                    'code_genre' => $validerUser['genre'],
-                    'id_college' => $validerUser['college'],
-                ]);
-                
-            DB::table('engager')->where('id_utilisateur', $idUtil)
-                ->update([
-                    'id_concours' => $validerUser['concour'],
-                    'id_role' => $validerUser['role']
-                ]);
-
-            $view = redirect()->route('administrateur.affichage_utils')
+            $user = User::updateUtil($validerUser, $idUtil, $informationsUser);
+            
+            $view = redirect()->route('administrateur.detail-utilisateur', $idUtil)
                 ->with('Success', 'L\'utilisateur a été modifié');
         }
         else {
-            $view = redirect()->route('administrateur.affichage_utils')
+            $view = redirect()->route('administrateur.liste-utilisateurs')
                 ->with('Erreur', 'L\'utilisateur n\'existe pas');
         }
         return $view;

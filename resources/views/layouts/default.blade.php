@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Affichage Utilisateurs</title>
+  <title> Concours Robots</title>
   <link rel="stylesheet" href="/css/pico.min.css">
 </head>
 <body>

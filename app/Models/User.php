@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Support\Facades\DB;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -44,5 +45,106 @@ class User extends Authenticatable implements MustVerifyEmail
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public static function detailUtilisateur($id)
+    {
+        return DB::table('users')
+                ->join('utilisateurs', 'users.id', '=', 'utilisateurs.id')
+                ->leftJoin('engager','utilisateurs.id', '=', 'engager.id_utilisateur')
+                ->leftJoin('genres', 'utilisateurs.code_genre', '=', 'genres.code')
+                ->leftJoin('equipes', 'utilisateurs.id_equipe', '=', 'equipes.id')
+                ->leftJoin('colleges', 'utilisateurs.id_college', '=', 'colleges.id')
+                ->leftJoin('roles', 'engager.id_role', '=', 'roles.id')
+                ->where('users.id', '=', $id)
+                ->select(
+                    'users.*',
+                    'utilisateurs.*',
+                    'utilisateurs.commentaire as commentaire_util',
+                    'equipes.nom as equipe',
+                    'colleges.nom as college',
+                    'roles.nom as role',
+                    'genres.nom as genre',
+                    'engager.*'
+                )
+                ->first();
+    }
+
+    public static function listeUtilisateurs()
+    {
+        return  DB::table('users')
+                    ->join('utilisateurs', 'users.id', '=', 'utilisateurs.id')
+                    ->join('engager','utilisateurs.id', '=', 'engager.id_utilisateur')
+                    ->join('roles', 'engager.id_role', '=', 'roles.id')
+                    ->select(
+                        'users.*',
+                        'utilisateurs.*',
+                        'engager.*',
+                        'roles.nom as role'
+                    )    
+                    ->orderBy('users.id')
+                    ->paginate(30);
+    }
+    
+    public static function formulaireModification($id)
+    {
+          
+            return DB::table('users')
+                ->join('utilisateurs', 'users.id', '=', 'utilisateurs.id')
+                ->leftJoin('engager','utilisateurs.id', '=', 'engager.id_utilisateur')
+                ->leftJoin('genres', 'utilisateurs.code_genre', '=', 'genres.code')
+                ->leftJoin('equipes', 'utilisateurs.id_equipe', '=', 'equipes.id')
+                ->leftJoin('colleges', 'utilisateurs.id_college', '=', 'colleges.id')
+                ->leftJoin('roles', 'engager.id_role', '=', 'roles.id')
+                ->leftJoin('concours', 'engager.id_concourS', '=', 'concours.id')
+                ->where('users.id', '=', $id)
+                ->select(
+                    'users.*',
+                    'utilisateurs.*',
+                    'utilisateurs.commentaire as commentaire_util',
+                    'equipes.nom as nom_equipe',
+                    'equipes.id as id_equipe',
+                    'colleges.id as id_college', 
+                    'colleges.nom as nom_college',
+                    'roles.id as id_role',
+                    'roles.nom as nom_role',
+                    'concours.id as id_concour',
+                    'genres.code as code_genre',
+                    'genres.nom as nom_genre'
+                )
+                ->first();
+
+    }
+
+    public static function supprimerUtil($id)
+    {
+        return DB::transaction(function() use ($id) {
+                DB::table('scorer')->where('id_secretaire', '=', $id)->delete();
+                DB::table('engager')->where('id_utilisateur', '=', $id)->delete();
+                DB::table('utilisateurs')->where('id', '=', $id)->delete();
+                DB::table('users')->where('id', '=', $id)->delete();
+            });
+    }
+
+    public static function updateUtil($validerUser, $idUtil, $informationsUser)
+    {
+            DB::table('users')->where('id', $idUtil)
+                ->update($informationsUser);
+
+            DB::table('utilisateurs')->where('id', $idUtil)
+                ->update([
+                    'nom' => $validerUser['nom'], 
+                    'prenom' => $validerUser['prenom'],
+                    'commentaire' => $validerUser['commentaire'],
+                    'code_genre' => $validerUser['genre'],
+                    'id_college' => $validerUser['college'],
+                ]);
+                
+            DB::table('engager')->where('id_utilisateur', $idUtil)
+                ->update([
+                    'id_concours' => $validerUser['concour'],
+                    'id_role' => $validerUser['role']
+                ]);
+
     }
 }

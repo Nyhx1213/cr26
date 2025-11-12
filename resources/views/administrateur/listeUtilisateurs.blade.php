@@ -28,7 +28,7 @@
       <td> {{ $utilisateur->prenom }}</td>
       <td> {{ $utilisateur->email }} </td>
       <td> {{ $utilisateur->role ?? 'Aucun' }}</td>
-      <td> <a href="{{ route('administrateur.detail_util', $utilisateur->id) }}"> Détail </td> 
+      <td> <a href="{{ route('administrateur.detail-utilisateur', $utilisateur->id) }}"> Détail </td> 
     </tr>
     @endforeach
   </tbody>

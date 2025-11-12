@@ -14,15 +14,27 @@
     <p> Commentaire : {{ $utilisateur->commentaireUtil ?? ''}} </p> 
   </div>
   <div class="positionButtonsDetail">
-    <form action="{{ route('administrateur.supprimer_util', $utilisateur->id) }}" method="POST">
+    <form id= "formulaire-suppression" action="{{ route('administrateur.supprimer-utilisateur', $utilisateur->id) }}" method="POST">
       @csrf 
       @method('DELETE')
       <button type="submit">Supprimer</button>
     </form>
 
-<a href="{{ route('administrateur.modification_util', $utilisateur->id) }}">
+<a href="{{ route('administrateur.modification-utilisateur', $utilisateur->id) }}">
     <button type="button">Modifier</button>
 </a>
+</div>
 
-  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const form = document.getElementById('formulaire-suppression');
+      
+      form.addEventListener('submit', function(event) {
+        const confirmed = confirm("Êtes-vous sûr de vouloir supprimer cet utilisateur ? Cette action est irréversible !");
+        if (!confirmed) {
+          event.preventDefault(); // Annule la soumission du formulaire
+        }
+      });
+    });
+  </script>
 @stop

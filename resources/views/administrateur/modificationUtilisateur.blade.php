@@ -4,7 +4,7 @@
 
 <h1> Modification de {{ $utilisateur->prenom. ' ' . $utilisateur->nom }} </h1>
 
-<form action="{{ route('administrateur.action_modifier_util', $utilisateur->id) }}" method="POST">
+<form id="formulaire-modification" action="{{ route('administrateur.action-modification', $utilisateur->id) }}" method="POST">
     @csrf 
     @method('PUT')
     <label for="nom"> Nom : </label>
@@ -13,7 +13,7 @@
     <input type="text" value="{{ $utilisateur->prenom }}" name="prenom" required> 
     <label for="email"> Email : </label>
     <input type="email" value="{{ $utilisateur->email }}" name="email" required>
-    <label for="motdepasse"> Modifier mot de passe : </label>
+    <label for="motdepasse"> Géneration de mot de passe : </label>
     <input type="checkbox" name="motdepasse"> <br><br>
     <label for="role"> Rôle : </label>
     <select name="role" id="role" required> 
@@ -60,8 +60,21 @@
     <textarea name="commentaire" id="commentaire"> {{ $utilisateur->commentaire_util }}</textarea>
     <button type="submit" name="valider">Valider</button>
 </form>
-<a href="{{ route('administrateur.detail_util', $utilisateur->id) }}">
+<a href="{{ route('administrateur.detail-utilisateur', $utilisateur->id) }}">
     <button>Annuler</button>
 </a> 
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const form = document.getElementById('formulaire-modification');
+      
+      form.addEventListener('submit', function(event) {
+        const confirmed = confirm("Êtes-vous sûr de vouloir modifier cet utilisateur ? Cette action est irréversible !");
+        if (!confirmed) {
+          event.preventDefault(); // Annule la soumission du formulaire
+        }
+      });
+    });
+  </script>
 
 @stop

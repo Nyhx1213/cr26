@@ -4,7 +4,7 @@
 <h1> Géneration de compte </h1>
 
 <div class="frame"> 
-    <form action="{{ route('administrateur.ajouter_util') }}" method="post">
+    <form action="{{ route('administrateur.ajouter-utilisateur') }}" method="post">
         @csrf
         <label for="prenom"> Prénom : </label>
         <input type="text" name="prenom" required>
@@ -31,6 +31,7 @@
             <option value="{{ $role->id }}"> {{ $role->nom }}</option>
         @endforeach
         </select>
+        <label for="college"> College : </label>
         <select name="college" id="college"> 
             <option value="" selected> Aucun </option>
         @foreach ($colleges as $college) 
@@ -40,5 +41,4 @@
         <input type="submit" value="Valider">
     </form>
 </div>
-@endsection
 @stop
