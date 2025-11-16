@@ -1,6 +1,20 @@
 @extends('layouts.default')
 
-@section('contenu')
+@section('title', 'Modification')
+
+@section('content')
+
+
+@if ($errors->any())
+<div>
+    <h4>Erreurs :</h4>
+    <ul>
+        @foreach ($errors->all() as $error)
+        <li>{{ $error }}</li>
+        @endforeach
+    </ul>
+</div>
+@endif
 
 <h1> Modification de {{ $utilisateur->prenom. ' ' . $utilisateur->nom }} </h1>
 
@@ -77,4 +91,4 @@
     });
   </script>
 
-@stop
+@endsection

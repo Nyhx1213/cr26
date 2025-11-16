@@ -1,35 +1,68 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\PrincipalControlleur;
+use App\Http\Controllers\PageController;
 use App\Http\Controllers\UserController;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\URL;
 use App\Http\Middleware\IsAdmin;
+use Livewire\Volt\Volt;
 
 //URL::forceScheme('https');
 
-Route::get('/', [PrincipalControlleur::class, 'accueil'])->name('accueil');
+// Accueil
+Route::get('/', [PageController::class, 'home'])->name('home');
 
-Route::get('/accueil', [PrincipalControlleur::class, 'accueil'])->name('accueil');
+// Collèges
+Route::get('/colleges/eleves', [PageController::class, 'eleves'])->name('colleges.eleves');
+Route::get('/colleges/equipe', [PageController::class, 'equipe'])->name('colleges.equipe');
 
-Route::get('/mentions', [PrincipalControlleur::class, 'mentions']); 
+// Épreuves
+Route::get('/epreuves', [PageController::class, 'epreuves'])->name('epreuves.index');
 
-Route::get('/admin/liste-utilisateurs', [UserController::class, 'listeUtilisateurs'])->name('administrateur.liste-utilisateurs');//->middleware(IsAdmin::class);
+// Classement
+Route::get('/classement', [PageController::class, 'classement'])->name('classement.index');
 
-Route::get('/admin/detail-utilisateur/{idUtil}', [UserController::class, 'detailUtilisateur'])->name('administrateur.detail-utilisateur');//->middleware(IsAdmin::class);
+// Édition
+Route::get('/edition/2024', [PageController::class, 'show2024'])->name('edition.2024');
+Route::get('/edition/2025', [PageController::class, 'show2025'])->name('edition.2025');
 
-Route::get('/admin/modification-utilisateur/{idUtil}', [UserController::class, 'formulaireModificationUtil'])->name('administrateur.modification-utilisateur');//->middleware(IsAdmin::class);
+// Saisie Note
+Route::get('/saisie-note', [PageController::class, 'saisie-note'])->name('saisieNote.index');
 
-Route::put('/admin/modification-utilisateur/{idUtil}', [UserController::class, 'modificationUtilisateur'])->name('administrateur.action-modification');//->middleware(IsAdmin::class);
+// Page Gestion
+Route::prefix('gestion')->group(function () {
+    Route::get('/epreuves', [PageController::class, 'epreuves'])->name('gestion.epreuves');
+    Route::get('/colleges', [PageController::class, 'colleges'])->name('gestion.colleges');
+    Route::get('/abonnement', [PageController::class, 'abonnement'])->name('gestion.abonnement');
+    Route::get('/role', [PageController::class, 'role'])->name('gestion.role');
+    Route::get('/edition', [PageController::class, 'edition'])->name('gestion.edition');
+    Route::get('/exportation', [PageController::class, 'exportation'])->name('gestion.exportation');
+    Route::get('/modification', [PageController::class, 'modification'])->name('gestion.modification');
+});
 
-Route::delete('/admin/suppression-utilisateur/{idUtil}', [UserController::class, 'suppressionUtilisateur'])->name('administrateur.supprimer-utilisateur');//->middleware(IsAdmin::class);
+// Page Admin
+Route::prefix('admin')->group(function () {
+    Route::get('/genre', [PageController::class, 'genre'])->name('admin.genre');
+    Route::get('/pays', [PageController::class, 'pays'])->name('admin.pays');
+    Route::get('/utilisateurs', [PageController::class, 'utilisateurs'])->name('admin.utilisateurs');
+});
 
-Route::get('/admin/generation-utilisateur', [UserController::class, 'formulaireGeneration'])->name('administrateur.generation-utilisateur');//->middleware(IsAdmin::class);
+Route::middleware([IsAdmin::class])->group(function () {
+Route::get('/admin/liste-utilisateurs', [UserController::class, 'listeUtilisateurs'])->name('administrateur.liste-utilisateurs');
+Route::get('/admin/detail-utilisateur/{idUtil}', [UserController::class, 'detailUtilisateur'])->name('administrateur.detail-utilisateur');
+Route::get('/admin/modification-utilisateur/{idUtil}', [UserController::class, 'formulaireModificationUtil'])->name('administrateur.modification-utilisateur');
+Route::put('/admin/modification-utilisateur/{idUtil}', [UserController::class, 'modificationUtilisateur'])->name('administrateur.action-modification');
+Route::delete('/admin/suppression-utilisateur/{idUtil}', [UserController::class, 'suppressionUtilisateur'])->name('administrateur.supprimer-utilisateur');
+Route::get('/admin/generation-utilisateur', [UserController::class, 'formulaireGeneration'])->name('administrateur.generation-utilisateur');
+Route::post('/admin/generation-utilisateur', [UserController::class, 'ajouterUtilisateur'])->name('administrateur.ajouter-utilisateur');
+});
 
-Route::post('/admin/generation-utilisateur', [UserController::class, 'ajouterUtilisateur'])->name('administrateur.ajouter-utilisateur');//->middleware(IsAdmin::class);
+// Connexion
+Volt::route('login', 'pages.auth.login')->name('login');
+Volt::route('register', 'pages.auth.register')->name('register');
+Volt::route('logout', 'pages.auth.logout')->name('logout');
 
-Route::view('/welcome', 'welcome');
 
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
@@ -40,3 +73,5 @@ Route::view('profile', 'profile')
     ->name('profile');
 
 require __DIR__.'/auth.php';
+
+Route::view('error', 'erreur');

@@ -1,6 +1,10 @@
 @extends('layouts.default')
 
-@section('contenu')
+@section('title', 'Liste')
+
+@section('content')
+
+
   <h1> Liste des utilisateurs </h1>
 
 <!-- Bar de recherche dedier à trouver un utilisateur --> 
@@ -36,4 +40,4 @@
 <!-- élement qui permet de choisir la page, les pages s'adapt apropos du nombre d'utilisateurs.  -->
   <p>{{ $les_utilisateurs->links() }} </p> 
 
-@stop
+@endsection

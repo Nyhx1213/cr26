@@ -1,0 +1,160 @@
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main#main {
+    flex: 1;
+}
+
+.navbar {
+    background-color: #1b1b1b;
+    color: white;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 0.5rem 1rem;
+}
+
+.navbar-brand {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar-brand a {
+    font-weight: bold;
+    color: #fff;
+    text-decoration: none;
+    font-size: 1.2rem;
+}
+
+/* --- Liens principaux --- */
+.nav-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.nav-links li {
+    position: relative;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #ddd;
+    padding: 0.5rem 0.8rem;
+    display: block;
+    transition: 0.3s;
+}
+
+.nav-links a:hover {
+    color: #fff;
+    background-color: #333;
+    border-radius: 6px;
+}
+
+/* --- Dropdown --- */
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    background-color: #222;
+    list-style: none;
+    padding: 0.5rem 0;
+    border-radius: 6px;
+    min-width: 160px;
+    top: 100%;
+    left: 0;
+    z-index: 100;
+}
+
+.dropdown:hover>.dropdown-menu {
+    display: block;
+}
+
+/* Sous-dropdown */
+.dropdown-menu .dropdown>.dropdown-menu {
+    top: 0;
+    left: 100%;
+}
+
+.dropdown-menu .dropdown:hover>.dropdown-menu {
+    display: block;
+}
+
+.dropdown-menu li a {
+    padding: 0.5rem 1rem;
+    color: #ddd;
+}
+
+.dropdown-menu li a:hover {
+    background-color: #333;
+    color: white;
+}
+
+/* --- Burger --- */
+.burger {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.burger span {
+    display: block;
+    width: 25px;
+    height: 3px;
+    background: white;
+    border-radius: 2px;
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+    .burger {
+        display: flex;
+    }
+
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .nav-links {
+        flex-direction: column;
+        display: none;
+        width: 100%;
+    }
+
+    .nav-links.active {
+        display: flex;
+    }
+
+    /* Les dropdown deviennent verticaux */
+    .dropdown-menu {
+        position: static;
+        min-width: 100%;
+    }
+
+    .dropdown-menu .dropdown>.dropdown-menu {
+        left: 0;
+        top: 0;
+    }
+}
+
+footer {
+    background-color: black;
+    color: white;
+    text-align: center;
+    padding: 1em 0;
+    width: 100%;
+}
+
+.footer {
+    color: white !important;
+}

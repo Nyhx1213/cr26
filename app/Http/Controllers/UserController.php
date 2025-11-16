@@ -24,6 +24,7 @@ use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
@@ -64,7 +65,9 @@ class UserController extends Controller
         }
         else {
             // Si l'utilisateur n'existe pas → redirection avec message d'erreur
-            $view = redirect()->route('administrateur.liste-utilisateurs') 
+            Log::error('Utilisateur pas trouvé', ['userID' => $id ?? null]);
+
+            $view = redirect()->route('error') 
                 ->with('Erreur', 'L\'utilisateur n\'existe pas');
         }
         return $view;
@@ -95,7 +98,8 @@ class UserController extends Controller
             ));
         }
         else {
-            $view = redirect()->route('administrateur.liste-utilisateurs') 
+            Log::error('Utilisateur pas trouvé', ['userID' => $id ?? null]);
+            $view = redirect()->route('error') 
                 ->with('Erreur', 'L\'utilisateur n\'existe pas');
         }
         return $view;
@@ -133,11 +137,12 @@ class UserController extends Controller
         // Validation des champs du formulaire
         $validerUser = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class, 'email')],
+            'email' => ['required', 'email', 'lowercase', 'email', 'max:255', Rule::unique(User::class, 'email')],
             'role' => ['required', 'integer'],
             'prenom' => ['required', 'string', 'max:255'],
             'genre' => ['required', 'string', 'max:1'],
-            'concour' => ['required', 'integer']
+            'concour' => ['required', 'integer'],
+            'college' => ['nullable', 'integer']
         ]);
 
         // Génération d’un mot de passe aléatoire (en clair pour l'instant)
@@ -184,7 +189,8 @@ class UserController extends Controller
                 ->with('success', 'Utilisateur créé et email envoyé');
         }
         else {
-            $view = redirect()->route('administrateur.generation-utilisateur')
+            Log::error('Erreur pendant création d\'utilisateur');
+            $view = redirect()->route('error')
                 ->with('error', 'Une erreur est survenue, veuillez contacter un administrateur.');
         }
         return $view;
@@ -209,7 +215,8 @@ class UserController extends Controller
                 ->with('success', 'Utilisateur supprimé');
         }
         else {
-            $view = redirect()->route('administrateur.detail-utilisateur', 'id')
+            Log::error('Erreur pendant supression d\'utilisateur', ['userID' => $id ?? null]);
+            $view = redirect()->route('error')
                 ->with('Erreur', 'L\'utilisateur n\'a pas été supprimé');
         }
         return $view;
@@ -226,7 +233,7 @@ class UserController extends Controller
         $validerUser = $request->validate([
             'nom' => ['required', 'string', 'max:255'],
             'prenom' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class, 'email')->ignore($idUtil)],
+            'email' => ['required', 'email', 'lowercase', 'email', 'max:255', Rule::unique(User::class, 'email')->ignore($idUtil)],
             'motdepasse' => ['string', 'nullable'],
             'role' => ['required', 'integer'],
             'genre' => ['required', 'string', 'max:1'],
@@ -234,6 +241,7 @@ class UserController extends Controller
             'commentaire' => ['string', 'nullable', 'max:1024'],
             'concour' => ['required', 'integer']
         ]);
+
 
         if(User::find($idUtil)){
             $name = RequeteSupport::generationNom($validerUser['nom'], $validerUser['prenom']);
@@ -262,7 +270,8 @@ class UserController extends Controller
                 ->with('Success', 'L\'utilisateur a été modifié');
         }
         else {
-            $view = redirect()->route('administrateur.liste-utilisateurs')
+            Log::error('Erreur pendant modification d\'utilisateur', ['userID' => $id ?? null]);
+            $view = redirect()->route('error')
                 ->with('Erreur', 'L\'utilisateur n\'existe pas');
         }
         return $view;
