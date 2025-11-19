@@ -31,14 +31,6 @@ $logout = action(function (Logout $logoutAction) {
         <li><a href="{{ route('epreuves.index') }}">Épreuves</a></li>
         <li><a href="{{ route('classement.index') }}">Classement</a></li>
 
-        <li class="dropdown">
-            <a href="#">Édition ▾</a>
-            <ul class="dropdown-menu">
-                <li><a href="{{ route('edition.2024') }}">2024</a></li>
-                <li><a href="{{ route('edition.2025') }}">2025</a></li>
-            </ul>
-        </li>
-
         @if (Route::has('login'))
         <li><a href="{{ route('login') }}">Connexion</a></li>
         @endif
@@ -56,15 +48,6 @@ $logout = action(function (Logout $logoutAction) {
 
         <li><a href="{{ route('epreuves.index') }}">Épreuves</a></li>
         <li><a href="{{ route('classement.index') }}">Classement</a></li>
-
-        <li class="dropdown">
-            <a href="#">Édition ▾</a>
-            <ul class="dropdown-menu">
-                <li><a href="{{ route('edition.2024') }}">2024</a></li>
-                <li><a href="{{ route('edition.2025') }}">2025</a></li>
-            </ul>
-        </li>
-
         <li><a href="{{ route('saisieNote.index') }}">Saisie Note</a></li>
 
         <li class="dropdown">
