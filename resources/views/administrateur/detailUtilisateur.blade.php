@@ -3,20 +3,21 @@
 @section('title', 'Detail')
 
 @section('content')
+<div class="detail-container">
+<h1 class="titreAdmin"> Détail de : {{ $utilisateur->nom.' '.$utilisateur->prenom}} </h1>
 
-<h1> Détail de : </h1>
-
-<div class="detailUtil">
-  <p> Nom : {{ $utilisateur->nom }} </p>
-  <p> Prénom : {{ $utilisateur->prenom }} </p> 
-  <p> Email : {{ $utilisateur->email }}</p>
-  <p> Rôle : {{ $utilisateur->role }} </p> 
-  <p> Genre : {{ $utilisateur->genre }}</p> 
-  <p> Collège : {{ $utilisateur->college ?? '' }}</p> 
-  <p> Équipe : {{ $utilisateur->equipe ?? ''}}: </p> 
-  <p> Commentaire : {{ $utilisateur->commentaireUtil ?? ''}} </p> 
+<div class="detailUtil-grid">
+  <p> Nom : <span>{{ $utilisateur->nom }}</span> </p>
+  <p> Prénom : <span>{{ $utilisateur->prenom }}</span> </p> 
+  <p> Email : <span>{{ $utilisateur->email }}</span></p>
+  <p> Rôle : <span>{{ $utilisateur->role }}</span> </p> 
+  <p> Genre : <span>{{ $utilisateur->genre }}</span></p> 
+  <p> Collège : <span>{{ $utilisateur->college ?? '' }}</span></p> 
+  <p> Équipe : <span>{{ $utilisateur->equipe ?? ''}}</span> </p> 
+  <p> Commentaire : <textarea readonly class="commentaire-box">{{ $utilisateur->commentaireUtil ?? ''}} </textarea></span> </p> 
 </div>
-<div class="positionButtonsDetail">
+
+<div class="detail-supression">
   <form id= "formulaire-suppression" action="{{ route('administrateur.supprimer-utilisateur', $utilisateur->id) }}" method="POST">
     @csrf 
     @method('DELETE')
@@ -26,6 +27,7 @@
   <a href="{{ route('administrateur.modification-utilisateur', $utilisateur->id) }}">
     <button type="button">Modifier</button>
   </a>
+</div>
 </div>
 
 <script>

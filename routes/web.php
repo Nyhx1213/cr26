@@ -63,14 +63,9 @@ Volt::route('login', 'pages.auth.login')->name('login');
 Volt::route('register', 'pages.auth.register')->name('register');
 Volt::route('logout', 'pages.auth.logout')->name('logout');
 
-
-Route::view('dashboard', 'dashboard')
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
-
-Route::view('profile', 'profile')
+Route::view('reset-password', 'profile')
     ->middleware(['auth'])
-    ->name('profile');
+    ->name('reset-password');
 
 require __DIR__.'/auth.php';
 

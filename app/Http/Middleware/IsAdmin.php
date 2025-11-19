@@ -26,7 +26,7 @@ class IsAdmin
         $role = RequeteSupport::recupRole($user->id);
 
         if (!$role || $role->code != "ADM"){
-            return redirect()->route('accueil')->with('Erreur', 'Refus d\'acces : Vous n\'etes pas un administrateur');
+            return redirect()->route('home')->with('Erreur', 'Refus d\'acces : Vous n\'etes pas un administrateur');
         }
         
         return $next($request);

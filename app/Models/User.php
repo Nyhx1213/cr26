@@ -83,7 +83,7 @@ class User extends Authenticatable implements MustVerifyEmail
                         'roles.nom as role'
                     )    
                     ->orderBy('users.id')
-                    ->paginate(30);
+                    ->paginate(10);
     }
     
     public static function formulaireModification($id)

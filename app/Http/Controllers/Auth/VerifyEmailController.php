@@ -52,7 +52,7 @@ class VerifyEmailController extends Controller
 
         // 5) If already verified, redirect (no-op)
         if ($user->hasVerifiedEmail()) {
-            return redirect()->intended(route('accueil') . '?verified=1');
+            return redirect()->intended(route('home') . '?verified=1');
         }
 
         // 6) Mark email as verified and dispatch the Verified event
@@ -61,7 +61,7 @@ class VerifyEmailController extends Controller
         }
 
         // 7) Redirect where you want (password set page, dashboard, etc.)
-        return redirect()->intended(route('profile') . '?verified=1');
+        return redirect()->intended(route('reset-password') . '?verified=1');
     }
 
 }

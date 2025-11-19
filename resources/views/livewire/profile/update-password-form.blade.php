@@ -15,6 +15,7 @@ new class extends Component
     /**
      * Update the password for the currently authenticated user.
      */
+    /*
     public function updatePassword(): void
     {
         try {
@@ -36,6 +37,30 @@ new class extends Component
 
         $this->dispatch('password-updated');
     }
+        */
+
+    //Function sans current password
+
+        public function updatePassword(): void
+    {
+        try {
+            $validated = $this->validate([
+                'password' => ['required', 'string', Password::defaults(), 'confirmed'],
+            ]);
+        } catch (ValidationException $e) {
+            $this->reset('password', 'password_confirmation');
+
+            throw $e;
+        }
+
+        Auth::user()->update([
+            'password' => Hash::make($validated['password']),
+        ]);
+
+        $this->reset('password', 'password_confirmation');
+
+        $this->dispatch('password-updated');
+    }
 }; ?>
 
 <section>
@@ -50,11 +75,12 @@ new class extends Component
     </header>
 
     <form wire:submit="updatePassword" class="mt-6 space-y-6">
-        <div>
+        <?php /*<div>
             <x-input-label for="update_password_current_password" :value="__('Current Password')" />
             <x-text-input wire:model="current_password" id="update_password_current_password" name="current_password" type="password" class="mt-1 block w-full" autocomplete="current-password" />
             <x-input-error :messages="$errors->get('current_password')" class="mt-2" />
-        </div>
+        </div> */
+        ?>
 
         <div>
             <x-input-label for="update_password_password" :value="__('New Password')" />
@@ -68,7 +94,7 @@ new class extends Component
             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
         </div>
 
-        <div class="flex items-center gap-4">
+        <div class="detail-supression" style="margin:10px">
             <x-primary-button>{{ __('Save') }}</x-primary-button>
 
             <x-action-message class="me-3" on="password-updated">

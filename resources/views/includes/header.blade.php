@@ -48,6 +48,7 @@ $logout = action(function (Logout $logoutAction) {
 
         <li><a href="{{ route('epreuves.index') }}">Épreuves</a></li>
         <li><a href="{{ route('classement.index') }}">Classement</a></li>
+
         <li><a href="{{ route('saisieNote.index') }}">Saisie Note</a></li>
 
         <li class="dropdown">
@@ -73,10 +74,10 @@ $logout = action(function (Logout $logoutAction) {
             <ul class="dropdown-menu">
                 <li><a href="{{ route('admin.genre') }}">Genre</a></li>
                 <li class="dropdown">
-                    <a href="#">Gestion Utilisateurs ▾</a>
+                    <a href="#">Utilisateurs ▾</a>
                     <ul class="dropdown-menu">
-                        <a href="{{ route('administrateur.liste-utilisateurs') }}">Liste-Utilisateurs</a></li>
-                        <a href="{{ route('administrateur.generation-utilisateur') }}">Génération de compte</a></li>
+                        <li><a href="{{ route('administrateur.generation-utilisateur') }}">Génération Utilisateur</a></li>
+                        <li><a href="{{ route('administrateur.liste-utilisateurs') }}">Liste Utilisateurs</a></li>
                     </ul>
                 </li>
                 <li><a href="{{ route('admin.pays') }}">Pays</a></li>

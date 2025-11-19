@@ -258,8 +258,8 @@ class UserController extends Controller
                 $motdepasseHash = Hash::make($motdepasseEnClaire);
                 $informationsUser['password'] = $motdepasseHash;
 
-                // Envoi de mail désactivé (mieux : lien de réinitialisation)
-                // Mail::to($validerUser['email'])->send(new ModificationUtil($validerUser['email'], $motdepasseEnClaire));
+            // Pas conforme RGPD a modifier avec une rénisialisation de mot de passe avec un durée longue plus tard !!
+            Mail::to($validerUser['email'])->send(new ModificationUtil($validerUser['email'], $motdepasseEnClaire));
             }
 
             // Mise à jour des tables

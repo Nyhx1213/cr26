@@ -1,3 +1,7 @@
+body {
+    background-color: lightblue;
+}
+
 .wrapper {
     display: flex;
     flex-direction: column;
@@ -6,6 +10,120 @@
 
 main#main {
     flex: 1;
+}
+
+.titreAdmin {
+    margin-top:25px;
+    text-align: center;
+}
+/* --- Page liste utilisateurs ---*/ 
+.barRecherche {
+    display: flex;
+    align-items: 'start';
+    gap: 10px;
+    margin:  20px ;
+    width: fit-content;
+}
+
+.barRecherche input {
+    padding: 6px 1px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.pageUtil table {
+    width: 90%;
+    margin: 0 auto;
+    border-collapse: collapse;
+    border: 1px solid #aaa;
+}
+
+.pageUtil thead th{ 
+    padding: 10px;
+    border: 1px solid #aaa;
+    text-align: center;
+    background: #f5f5f5;
+    font-weight: bold;
+}
+
+.pageUtil td a {
+    padding: 6px 12px;
+    border: 1px solid #000;
+    background: white;
+    text-decoration: none;
+    color: black;
+    border-radius: 3px;
+}
+
+.pageUtil tbody td {
+    padding: 12px;
+    border: 1px solid #aaa;
+    text-align: center;
+}
+
+.pagination-centre {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+/* Page Detail Utilisateur Admin et Modification Utilisateur */
+.detail-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    padding: 50px;
+    background-color: white;
+    border-radius: 8%;
+}
+
+.detail-container-bigger{
+    max-width: 1500px;
+    margin: 0 auto;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    padding: 50px;
+    background-color: white;
+    border-radius: 8%;
+}
+
+.detailUtil-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr ;
+    row-gap: 35px;
+    column-gap: 20px;
+    
+}
+
+.detailUtil-grid span {
+    font-weight: 800;
+}
+
+.detail-supression {
+    margin-top: 3rem;
+    display: flex;           
+    gap: 100px;               
+    justify-content: center; 
+    align-items: center;     
+}
+
+.detail-supression button {
+    width: 140px;
+    height: 70px;
+    border: 1px solid black;
+    cursor: pointer;
+    font-size:16px; 
+}
+
+.detail-supression input[type=submit]{
+    width: 180px;
+    height: 70px;
+    border: 1px solid black;
+    cursor: pointer;
+    font-size:20px; 
 }
 
 .navbar {
