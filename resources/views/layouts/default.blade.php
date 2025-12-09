@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Application de gestion du concours de robots des collèges (Deux-Sèvres) : inscriptions, saisie des notes, résultats et informations générales." />
-  <link href="/css/pico.css" rel="stylesheet" />
-  <link href="/css/style.css" rel="stylesheet" />
+  <link href="{{ asset('css/pico.css') }}" rel="stylesheet" />
+  <link href="{{ asset('css/style.css') }}" rel="stylesheet" />
   <title>@yield('title', 'Concours Robot')</title>
 </head>
 <style>
