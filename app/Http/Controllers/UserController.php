@@ -8,6 +8,7 @@ use App\Models\Role;
 use App\Models\Concour;
 use App\Models\User;
 use App\Models\College;
+use App\Models\Statut;
 use App\Models\Equipe;
 use App\Models\Utilisateur;
 use App\Models\Genre;
@@ -25,6 +26,7 @@ use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
 class UserController extends Controller
 {
@@ -91,10 +93,11 @@ class UserController extends Controller
             $les_colleges = College::all();
             $les_equipes = Equipe::all();
             $les_genres = Genre::all();
+            $les_statuts = Statut::all();
 
             $view = view('administrateur.modificationUtilisateur', compact(
                 'utilisateur', 'les_roles', 'les_colleges', 
-                'les_equipes', 'les_genres', 'les_concours'
+                'les_equipes', 'les_genres', 'les_concours', 'les_statuts'
             ));
         }
         else {
@@ -117,7 +120,8 @@ class UserController extends Controller
         $roles = Role::all();
         $concours = Concour::all();
         $colleges = College::all();
-        return view('administrateur.generationUtilisateur', compact('roles', 'genres', 'concours', 'colleges'));
+        $statuts = Statut::all();
+        return view('administrateur.generationUtilisateur', compact('roles', 'genres', 'concours', 'colleges', 'statuts'));
     }
 
     ##
@@ -142,7 +146,8 @@ class UserController extends Controller
             'prenom' => ['required', 'string', 'max:255'],
             'genre' => ['required', 'string', 'max:1'],
             'concour' => ['required', 'integer'],
-            'college' => ['nullable', 'integer']
+            'college' => ['nullable', 'integer'],
+            'statut' => ['required', 'string', 'max:2'],
         ]);
 
         // Génération d’un mot de passe aléatoire (en clair pour l'instant)
@@ -157,21 +162,26 @@ class UserController extends Controller
             $nameUser = RequeteSupport::generationNom($validerUser['name'], $validerUser['prenom']);
 
             // Création du compte principal
-            $user = User::create([
+                        $user = User::create([
                 'name' => $nameUser,
                 'email' => $validerUser['email'],
                 'password' => $validerUser['password']
             ]);
-            
-            // Événement Laravel (ex: vérification d'email)
-                event(new Registered($user));
+                try {
+                    event(new Registered($user)); // Verification de mail
+                } catch (TransportExceptionInterface $e) {
+                    // Message d'erreur a l'utilisateur 
+                    return back()->withErrors([
+                    'email' => 'L\'addresse mail n\'a pas été trouvez.'
+                ]);
+            }
             
             // Création du profil utilisateur
             Utilisateur::create([
                 'id' => $user->id,
                 'nom' => $validerUser['name'],
                 'prenom' => $validerUser['prenom'],
-                'code_statut' => 'N',
+                'code_statut' => $validerUser['statut'],
                 'code_genre' => $validerUser['genre']
             ]);
 
@@ -239,11 +249,12 @@ class UserController extends Controller
             'genre' => ['required', 'string', 'max:1'],
             'college' => ['integer', 'nullable'],
             'commentaire' => ['string', 'nullable', 'max:1024'],
-            'concour' => ['required', 'integer']
+            'concour' => ['required', 'integer'],
+            'statut' => ['required', 'string', 'max:2']
         ]);
 
 
-        if(User::find($idUtil)){
+        if(User::find($idUtil) && Role::find($validerUser['role'])){
             $name = RequeteSupport::generationNom($validerUser['nom'], $validerUser['prenom']);
 
             // Informations de base du compte User
@@ -258,9 +269,17 @@ class UserController extends Controller
                 $motdepasseHash = Hash::make($motdepasseEnClaire);
                 $informationsUser['password'] = $motdepasseHash;
 
-            // Pas conforme RGPD a modifier avec une rénisialisation de mot de passe avec un durée longue plus tard !!
-            Mail::to($validerUser['email'])->send(new ModificationUtil($validerUser['email'], $motdepasseEnClaire));
+             try {
+                Mail::to($validerUser['email'])->send(new ModificationUtil($validerUser['email'], $motdepasseEnClaire));
+            } catch (TransportExceptionInterface $e) {
+                return back()->withErrors([
+                    'email' => 'L\'addresse mail n\'a pas été trouvez.'
+                ]);
             }
+            }
+
+            // Pas conforme RGPD a modifier avec une rénisialisation de mot de passe avec un durée longue plus tard !!
+
 
             // Mise à jour des tables
 
@@ -277,3 +296,4 @@ class UserController extends Controller
         return $view;
     }
 }
+ 

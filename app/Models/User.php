@@ -56,9 +56,12 @@ class User extends Authenticatable implements MustVerifyEmail
                 ->leftJoin('equipes', 'utilisateurs.id_equipe', '=', 'equipes.id')
                 ->leftJoin('colleges', 'utilisateurs.id_college', '=', 'colleges.id')
                 ->leftJoin('roles', 'engager.id_role', '=', 'roles.id')
+                ->leftJoin('statuts', 'utilisateurs.code_statut', '=' , 'statuts.code')
                 ->where('users.id', '=', $id)
                 ->select(
                     'users.*',
+                    'statuts.nom as nom_statut',
+                    'statuts.code as code_statut',
                     'utilisateurs.*',
                     'utilisateurs.commentaire as commentaire_util',
                     'equipes.nom as equipe',
@@ -138,6 +141,7 @@ class User extends Authenticatable implements MustVerifyEmail
                     'commentaire' => $validerUser['commentaire'],
                     'code_genre' => $validerUser['genre'],
                     'id_college' => $validerUser['college'],
+                    'code_statut' => $validerUser['statut']
                 ]);
                 
             DB::table('engager')->where('id_utilisateur', $idUtil)

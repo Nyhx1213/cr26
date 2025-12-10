@@ -61,6 +61,8 @@ Route::get('/admin/generation-utilisateur', [UserController::class, 'formulaireG
 Route::post('/admin/generation-utilisateur', [UserController::class, 'ajouterUtilisateur'])->name('administrateur.ajouter-utilisateur');
 });
 
+route::get('/erreur', [PageController::class, 'pageErreur'])->name('erreur');
+
 // Connexion
 Volt::route('login', 'pages.auth.login')->name('login');
 Volt::route('register', 'pages.auth.register')->name('register');

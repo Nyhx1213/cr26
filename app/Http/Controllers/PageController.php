@@ -14,4 +14,8 @@ class PageController extends Controller
     function mentions() {
         return view('mentions');
     }
+
+    function pageErreur(){
+        return view('erreur');
+    }
 }

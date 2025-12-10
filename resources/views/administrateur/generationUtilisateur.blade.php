@@ -41,6 +41,18 @@
                 @endforeach
                 </select>
             </div>
+            <div> 
+                <label for="statut"> Statut : </label>
+                <select name="statut" id="statut">
+                    @foreach ($statuts as $statut)
+                        @if ($statut->code == 'N')
+                        <option value=" {{ $statut->code }} " selected> {{ $statut->nom }} </option>
+                        @else
+                        <option value=" {{ $statut->code }} "> {{ $statut->nom }} </option>   
+                        @endif
+                    @endforeach
+                </select> 
+            </div>
             <div>
                 <label for="concour"> Concour : </label>
                 <select name="concour" id="concour" required>

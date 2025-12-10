@@ -50,6 +50,18 @@
       @endforeach
       </select>
     </div>
+    <div> 
+      <label for="statut"> Statut : </label>
+      <select name="statut" id="statut" required>
+      @foreach ($les_statuts as $statut) 
+        @if ($statut->code == $utilisateur->code_statut) 
+        <option value="{{ $statut->code }}" selected> {{ $statut->nom }} </option>
+        @else 
+        <option value="{{ $statut->code }}"> {{ $statut->nom }} </option>
+        @endif
+      @endforeach
+      </select>
+    </div>
     <div>
     <label for="genre"> Genre : </label>
     <select name="genre" id="genre" required>

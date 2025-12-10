@@ -3,6 +3,16 @@
 @section('title', 'Detail')
 
 @section('content')
+@if ($errors->any())
+<div>
+    <h4>Erreurs :</h4>
+    <ul>
+        @foreach ($errors->all() as $error)
+        <li>{{ $error }}</li>
+        @endforeach
+    </ul>
+</div>
+@endif
 <div class="detail-container">
 <h1 class="titreAdmin"> Détail de : {{ $utilisateur->nom.' '.$utilisateur->prenom}} </h1>
 
@@ -10,6 +20,7 @@
   <p> Nom : <span>{{ $utilisateur->nom }}</span> </p>
   <p> Prénom : <span>{{ $utilisateur->prenom }}</span> </p> 
   <p> Email : <span>{{ $utilisateur->email }}</span></p>
+  <p> Statut : <span>{{ $utilisateur->nom_statut }} </span></p>
   <p> Rôle : <span>{{ $utilisateur->role }}</span> </p> 
   <p> Genre : <span>{{ $utilisateur->genre }}</span></p> 
   <p> Collège : <span>{{ $utilisateur->college ?? '' }}</span></p> 
