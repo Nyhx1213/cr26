@@ -14,6 +14,7 @@ use Livewire\Volt\Volt;
 Route::get('/', [PageController::class, 'home'])->name('home');
 
 // Collèges
+/*
 Route::get('/colleges/eleves', [PageController::class, 'eleves'])->name('colleges.eleves');
 Route::get('/colleges/equipe', [PageController::class, 'equipe'])->name('colleges.equipe');
 
@@ -40,13 +41,15 @@ Route::prefix('gestion')->group(function () {
     Route::get('/exportation', [PageController::class, 'exportation'])->name('gestion.exportation');
     Route::get('/modification', [PageController::class, 'modification'])->name('gestion.modification');
 });
-
+*/
 // Page Admin
+/*
 Route::prefix('admin')->group(function () {
     Route::get('/genre', [PageController::class, 'genre'])->name('admin.genre');
     Route::get('/pays', [PageController::class, 'pays'])->name('admin.pays');
     Route::get('/utilisateurs', [PageController::class, 'utilisateurs'])->name('admin.utilisateurs');
 });
+*/
 
 Route::middleware([IsAdmin::class])->group(function () {
 Route::get('/admin/liste-utilisateurs', [UserController::class, 'listeUtilisateurs'])->name('administrateur.liste-utilisateurs');

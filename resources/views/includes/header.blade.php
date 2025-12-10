@@ -1,13 +1,4 @@
-<?php
 
-use App\Livewire\Actions\Logout;
-use function Livewire\Volt\action;
-
-$logout = action(function (Logout $logoutAction) {
-    $logoutAction();
-    $this->redirect('/', navigate: true);
-});
-?>
 <nav class="navbar">
     <div class="navbar-brand">
         <a href="{{ route('home') }}">Projet concours-robots</a>
@@ -23,13 +14,13 @@ $logout = action(function (Logout $logoutAction) {
         <li class="dropdown">
             <a href="#">Collèges ▾</a>
             <ul class="dropdown-menu">
-                <li><a href="{{ route('colleges.eleves') }}">Élèves</a></li>
-                <li><a href="{{ route('colleges.equipe') }}">Équipe</a></li>
+                <li><a href="#">Élèves</a></li>
+                <li><a href="#">Équipe</a></li>
             </ul>
         </li>
 
-        <li><a href="{{ route('epreuves.index') }}">Épreuves</a></li>
-        <li><a href="{{ route('classement.index') }}">Classement</a></li>
+        <li><a href="#">Épreuves</a></li>
+        <li><a href="#">Classement</a></li>
 
         @if (Route::has('login'))
         <li><a href="{{ route('login') }}">Connexion</a></li>
@@ -41,29 +32,29 @@ $logout = action(function (Logout $logoutAction) {
         <li class="dropdown">
             <a href="#">Collèges ▾</a>
             <ul class="dropdown-menu">
-                <li><a href="{{ route('colleges.eleves') }}">Élèves</a></li>
-                <li><a href="{{ route('colleges.equipe') }}">Équipe</a></li>
+                <li><a href="#">Élèves</a></li>
+                <li><a href="#">Équipe</a></li>
             </ul>
         </li>
 
-        <li><a href="{{ route('epreuves.index') }}">Épreuves</a></li>
-        <li><a href="{{ route('classement.index') }}">Classement</a></li>
+        <li><a href="#">Épreuves</a></li>
+        <li><a href="#">Classement</a></li>
 
-        <li><a href="{{ route('saisieNote.index') }}">Saisie Note</a></li>
+        <li><a href="#">Saisie Note</a></li>
 
         <li class="dropdown">
             <a href="#">Page Gestion ▾</a>
             <ul class="dropdown-menu">
-                <li><a href="{{ route('gestion.epreuves') }}">Épreuves</a></li>
-                <li><a href="{{ route('gestion.colleges') }}">Collèges</a></li>
-                <li><a href="{{ route('gestion.abonnement') }}">Abonnement</a></li>
-                <li><a href="{{ route('gestion.role') }}">Rôle</a></li>
+                <li><a href="#">Épreuves</a></li>
+                <li><a href="#">Collèges</a></li>
+                <li><a href="#">Abonnement</a></li>
+                <li><a href="#">Rôle</a></li>
                 <li class="dropdown">
                     <a href="#">Résultat ▾</a>
                     <ul class="dropdown-menu">
-                        <li><a href="{{ route('gestion.edition') }}">Édition</a></li>
-                        <li><a href="{{ route('gestion.exportation') }}">Exportation</a></li>
-                        <li><a href="{{ route('gestion.modification') }}">Modification</a></li>
+                        <li><a href="#">Édition</a></li>
+                        <li><a href="#">Exportation</a></li>
+                        <li><a href="#">Modification</a></li>
                     </ul>
                 </li>
             </ul>
@@ -72,7 +63,7 @@ $logout = action(function (Logout $logoutAction) {
         <li class="dropdown">
             <a href="#">Page Admin ▾</a>
             <ul class="dropdown-menu">
-                <li><a href="{{ route('admin.genre') }}">Genre</a></li>
+                <li><a href="#">Genre</a></li>
                 <li class="dropdown">
                     <a href="#">Utilisateurs ▾</a>
                     <ul class="dropdown-menu">
@@ -80,13 +71,13 @@ $logout = action(function (Logout $logoutAction) {
                         <li><a href="{{ route('administrateur.liste-utilisateurs') }}">Liste Utilisateurs</a></li>
                     </ul>
                 </li>
-                <li><a href="{{ route('admin.pays') }}">Pays</a></li>
+                <li><a href="#">Pays</a></li>
             </ul>
         </li>
 
         <!-- Déconnexion -->
         <li>
-        @livewire('layout.navigation')
+            @livewire('logout-button')
         </li>
         @endguest
     </ul>
