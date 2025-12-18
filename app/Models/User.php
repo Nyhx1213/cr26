@@ -89,6 +89,65 @@ class User extends Authenticatable implements MustVerifyEmail
                     ->paginate(10);
     }
     
+    public static function utilisateursBymail($email){
+        return  DB::table('users')
+                    ->join('utilisateurs', 'users.id', '=', 'utilisateurs.id')
+                    ->join('engager','utilisateurs.id', '=', 'engager.id_utilisateur')
+                    ->join('roles', 'engager.id_role', '=', 'roles.id')
+                    ->where('users.email', 'LIKE', '%'.$email.'%')
+                    ->select(
+                        'users.*',
+                        'utilisateurs.*',
+                        'engager.*',
+                        'roles.nom as role'
+                    )    
+                    ->orderBy('users.id')
+                    ->paginate(10);
+    }
+
+        public static function utilisateurByRole($role){
+        return  DB::table('users')
+                    ->join('utilisateurs', 'users.id', '=', 'utilisateurs.id')
+                    ->join('engager','utilisateurs.id', '=', 'engager.id_utilisateur')
+                    ->join('roles', 'engager.id_role', '=', 'roles.id')
+                    ->where('roles.id', '=', $role)
+                    ->select(
+                        'users.*',
+                        'utilisateurs.*',
+                        'engager.*',
+                        'roles.nom as role'
+                    )    
+                    ->orderBy('users.id')
+                    ->paginate(10);
+    }
+    public static function deleteMultiple($ids){
+
+    DB::table('scorer')->whereIn('id_secretaire', $ids)->delete();
+    DB::table('engager')->whereIn('id_utilisateur', $ids)->delete();
+    DB::table('utilisateurs')->whereIn('id', $ids)->delete();
+    DB::table('users')->whereIn('id', $ids)->delete();
+
+    }
+
+        public static function utilisateursByRoleMail($role, $email){
+            return DB::table('users')
+                ->join('utilisateurs', 'users.id', '=', 'utilisateurs.id')
+                ->join('engager','utilisateurs.id', '=', 'engager.id_utilisateur')
+                ->join('roles', 'engager.id_role', '=', 'roles.id')
+                ->where('roles.id', '=', $role)
+                ->where('users.email', 'LIKE', '%'.$email.'%')
+                ->select(
+                    'users.*',
+                    'utilisateurs.*',
+                    'engager.*',
+                    'roles.nom as role'
+                )
+                ->orderBy('users.id')
+                ->paginate(10);
+
+    }
+    
+    
     public static function formulaireModification($id)
     {
           

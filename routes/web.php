@@ -53,6 +53,8 @@ Route::prefix('admin')->group(function () {
 
 Route::middleware([IsAdmin::class])->group(function () {
 Route::get('/admin/liste-utilisateurs', [UserController::class, 'listeUtilisateurs'])->name('administrateur.liste-utilisateurs');
+Route::post('/admin/liste-utilisateurs', [UserController::class, 'listeUtilisateursTri'])->name('administrateur.liste-utilbymail');
+Route::post('/admin/supprimer-multiple', [UserController::class, 'suppressionMultiple'])->name('administrateur.suppMultiple');
 Route::get('/admin/detail-utilisateur/{idUtil}', [UserController::class, 'detailUtilisateur'])->name('administrateur.detail-utilisateur');
 Route::get('/admin/modification-utilisateur/{idUtil}', [UserController::class, 'formulaireModificationUtil'])->name('administrateur.modification-utilisateur');
 Route::put('/admin/modification-utilisateur/{idUtil}', [UserController::class, 'modificationUtilisateur'])->name('administrateur.action-modification');

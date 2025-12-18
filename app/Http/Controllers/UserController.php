@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use App\Models\Role;
+use Carbon\Carbon;
 use App\Models\Concour;
 use App\Models\User;
 use App\Models\College;
@@ -47,10 +48,37 @@ class UserController extends Controller
     function listeUtilisateurs()
     {
        $les_utilisateurs = User::listeUtilisateurs();
+       $les_roles = Role::all();
 
-        return view('administrateur.listeUtilisateurs', compact('les_utilisateurs'));
+        return view('administrateur.listeUtilisateurs', compact('les_utilisateurs', 'les_roles'));
     }
     
+    function listeUtilisateursTri(Request $request)
+    {
+        $validated = $request->validate([
+            "contenu" => ['nullable', 'string'],
+            "role"    => ['nullable', 'integer']
+        ]);
+
+        $email = $validated['contenu'] ?? null;
+        $role  = $validated['role'] ?? null;
+
+        if (!empty($role) && !empty($email)) {
+            $les_utilisateurs = User::utilisateursByRoleMail($role, $email);
+        } elseif (!empty($role)) {
+            $les_utilisateurs = User::utilisateurByRole($role);
+        } elseif (!empty($email)) {
+            $les_utilisateurs = User::utilisateursBymail($email);
+        } else {
+            $les_utilisateurs = User::listeUtilisateurs();
+        }
+
+        $les_roles = Role::all();
+
+        return view('administrateur.listeUtilisateurs', compact('les_utilisateurs', 'role', 'les_roles'));
+    }
+
+
     /**
      * Affiche les détails d’un utilisateur précis.
      * 
@@ -121,6 +149,7 @@ class UserController extends Controller
         $concours = Concour::all();
         $colleges = College::all();
         $statuts = Statut::all();
+        $dateExpiration = Carbon::now()->addYear();
         return view('administrateur.generationUtilisateur', compact('roles', 'genres', 'concours', 'colleges', 'statuts'));
     }
 
@@ -294,6 +323,11 @@ class UserController extends Controller
                 ->with('Erreur', 'L\'utilisateur n\'existe pas');
         }
         return $view;
+    }
+
+    function suppressionMultiple(Request $request) {
+        User::deleteMultiple($request->ids);
+        return redirect()->route('administrateur.liste-utilisateurs');
     }
 }
  
