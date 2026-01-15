@@ -24,7 +24,7 @@
                 <label for="prenom"> Prénom : </label>
                 <input type="text" name="prenom" required>
             </div>
-            <!-- "name" est le nom de la personne -->
+            <!-- "name" est le nom de la personne. -->
             <div>
                 <label for="name"> Nom : </label> 
                 <input type="text" name="name" required> 
