@@ -16,6 +16,12 @@
 </div>
 @endif
 
+@if (isset($popup))
+<div class="popup"> 
+    <p> Utilisateur modifiée avec succès </p>
+</div>
+@endif
+
 <div class="detail-container-bigger">
   <h1 class="titreAdmin"> Modification de {{ $utilisateur->prenom. ' ' . $utilisateur->nom }} </h1>
   <form id="formulaire-modification" action="{{ route('administrateur.action-modification', $utilisateur->id) }}" method="POST">

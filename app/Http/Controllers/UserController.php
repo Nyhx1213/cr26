@@ -16,6 +16,7 @@ use App\Models\Genre;
 use App\Models\Engager;
 use App\Mail\MailInfoUtil;
 use App\Mail\ModificationUtil;
+use Illuminate\Support\Facades\Password;
 use App\Requetes\RequeteSupport;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\DB;
@@ -72,6 +73,8 @@ class UserController extends Controller
         } else {
             $les_utilisateurs = User::listeUtilisateurs();
         }
+
+        $les_utilisateurs->appends($request->only(['contenu', 'role']));
 
         $les_roles = Role::all();
 
@@ -246,12 +249,19 @@ class UserController extends Controller
      */
     function suppressionUtilisateur($id)
     {
+        $user = Auth::user();
         if(User::find($id)){
             // Transaction : si une suppression échoue, tout est annulé
-            User::supprimerUtil($id);
+            
+            $currentUser = Auth::user();
 
-            $view = redirect()->route('administrateur.liste-utilisateurs')
+            if ($currentUser->$id == $id) {
+                $view = redirect()->route('administrateur.liste-utilisateurs')
+                    ->with('Erreur', 'Impossible de supprimer son propre utilisateur.');
+            } else {    
+                $view = redirect()->route('administrateur.liste-utilisateurs')
                 ->with('success', 'Utilisateur supprimé');
+            }
         }
         else {
             Log::error('Erreur pendant supression d\'utilisateur', ['userID' => $id ?? null]);
@@ -299,7 +309,8 @@ class UserController extends Controller
                 $informationsUser['password'] = $motdepasseHash;
 
              try {
-                Mail::to($validerUser['email'])->send(new ModificationUtil($validerUser['email'], $motdepasseEnClaire));
+                Password::sendResetLink($request->only('email'));
+                //Mail::to($validerUser['email'])->send(new ModificationUtil($validerUser['email'], $motdepasseEnClaire));
             } catch (TransportExceptionInterface $e) {
                 return back()->withErrors([
                     'email' => 'L\'addresse mail n\'a pas été trouvez.'
@@ -326,7 +337,24 @@ class UserController extends Controller
     }
 
     function suppressionMultiple(Request $request) {
-        User::deleteMultiple($request->ids);
+        $request->validate([
+            'ids' => ['required', 'array'],
+            'ids.*' => ['integer']
+        ]);
+        $deletingOwnSession = false;
+        $currentUser = Auth::user();
+        foreach ($request->ids as $id) {
+            if ($id == $currentUser->id){
+                $deletingOwnSession = true;
+            }
+        }
+        if ($deletingOwnSession == false) {
+
+            User::deleteMultiple($request->ids);
+        } else {
+            return redirect()->route('administrateur.liste-utilisateurs');
+            //add error message saying you can't remove your own user :)
+        }
         return redirect()->route('administrateur.liste-utilisateurs');
     }
 }

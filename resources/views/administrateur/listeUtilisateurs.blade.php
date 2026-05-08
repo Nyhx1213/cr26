@@ -4,12 +4,29 @@
 
 @section('content')
 
+@if ($errors->any())
+<div>
+    <h4>Erreurs :</h4>
+    <ul>
+        @foreach ($errors->all() as $error)
+        <li>{{ $error }}</li>
+        @endforeach
+    </ul>
+</div>
+@endif
+
+@if (isset($popup))
+<div class="popup"> 
+    <p> Utilisateurs supprimer avec succès </p>
+</div>
+@endif
+
 <div class="detail-container-bigger"> 
   <h1 class="titreAdmin"> Liste des utilisateurs </h1>
 
+    
 <!-- Bar de recherche dedier à trouver un utilisateur --> 
-
-    <form action="{{ route('administrateur.liste-utilbymail') }}" method=POST> 
+    <form action="{{ route('administrateur.liste-utilbymail') }}" method="GET"> 
       @csrf
       <div class="barRecherche">
         <label for="contenu"> Bar de recherche</label>

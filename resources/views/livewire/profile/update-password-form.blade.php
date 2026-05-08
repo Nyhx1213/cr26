@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
 use Livewire\Volt\Component;
+use App\Models\User;
 
 new class extends Component
 {
@@ -53,9 +54,10 @@ new class extends Component
             throw $e;
         }
 
-        Auth::user()->update([
-            'password' => Hash::make($validated['password']),
-        ]);
+        $user = User::find(Auth::id());
+        
+        $user->password = Hash::make($validated['password']);
+        $user->save();
 
         $this->reset('password', 'password_confirmation');
 

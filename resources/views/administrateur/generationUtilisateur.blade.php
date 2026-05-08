@@ -15,6 +15,13 @@
 </div>
 @endif
 
+@if (isset($popup))
+<div class="popup"> 
+    <p> Utilisateur crée avec succès </p>
+</div>
+@endif
+
+
 <div class="detail-container"> 
     <h1 class="titreAdmin"> Génération Utilisateur </h1>
     <form action="{{ route('administrateur.ajouter-utilisateur') }}" method="post">

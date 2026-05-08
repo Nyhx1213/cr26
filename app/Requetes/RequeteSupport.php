@@ -31,7 +31,7 @@ class RequeteSupport
                         )
                         ->first();
     }
-    
+
     public static function updateUtil(int $idUtil, array $validerUser)
     {
         $name = self::generationNom($validerUser['nom'], $validerUser['prenom']);

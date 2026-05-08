@@ -1,7 +1,7 @@
 <?php
 
 namespace Tests\Feature;
-
+use App\Http\Controllers\UserController;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Volt\Volt;
