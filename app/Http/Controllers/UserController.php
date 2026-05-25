@@ -101,7 +101,7 @@ class UserController extends Controller
             Log::error('Utilisateur pas trouvé', ['userID' => $id ?? null]);
 
             $view = redirect()->route('error') 
-                ->with('Erreur', 'L\'utilisateur n\'existe pas');
+                ->with('erreur', 'L\'utilisateur n\'existe pas');
         }
         return $view;
     }
@@ -134,7 +134,7 @@ class UserController extends Controller
         else {
             Log::error('Utilisateur pas trouvé', ['userID' => $id ?? null]);
             $view = redirect()->route('error') 
-                ->with('Erreur', 'L\'utilisateur n\'existe pas');
+                ->with('erreur', 'L\'utilisateur n\'existe pas');
         }
         return $view;
     }
@@ -233,7 +233,7 @@ class UserController extends Controller
         else {
             Log::error('Erreur pendant création d\'utilisateur');
             $view = redirect()->route('error')
-                ->with('error', 'Une erreur est survenue, veuillez contacter un administrateur.');
+                ->with('erreur', 'Une erreur est survenue, veuillez contacter un administrateur.');
         }
         return $view;
     }
@@ -257,7 +257,7 @@ class UserController extends Controller
 
             if ($currentUser->$id == $id) {
                 $view = redirect()->route('administrateur.liste-utilisateurs')
-                    ->with('Erreur', 'Impossible de supprimer son propre utilisateur.');
+                    ->with('erreur', 'Impossible de supprimer son propre utilisateur.');
             } else {    
                 $view = redirect()->route('administrateur.liste-utilisateurs')
                 ->with('success', 'Utilisateur supprimé');
@@ -266,7 +266,7 @@ class UserController extends Controller
         else {
             Log::error('Erreur pendant supression d\'utilisateur', ['userID' => $id ?? null]);
             $view = redirect()->route('error')
-                ->with('Erreur', 'L\'utilisateur n\'a pas été supprimé');
+                ->with('erreur', 'L\'utilisateur n\'a pas été supprimé');
         }
         return $view;
     }
@@ -326,12 +326,12 @@ class UserController extends Controller
             $user = User::updateUtil($validerUser, $idUtil, $informationsUser);
             
             $view = redirect()->route('administrateur.detail-utilisateur', $idUtil)
-                ->with('Success', 'L\'utilisateur a été modifié');
+                ->with('success', 'L\'utilisateur a été modifié');
         }
         else {
             Log::error('Erreur pendant modification d\'utilisateur', ['userID' => $id ?? null]);
             $view = redirect()->route('error')
-                ->with('Erreur', 'L\'utilisateur n\'existe pas');
+                ->with('erreur', 'L\'utilisateur n\'existe pas');
         }
         return $view;
     }
@@ -352,8 +352,8 @@ class UserController extends Controller
 
             User::deleteMultiple($request->ids);
         } else {
-            return redirect()->route('administrateur.liste-utilisateurs');
-            //add error message saying you can't remove your own user :)
+            return redirect()->route('administrateur.liste-utilisateurs')
+                ->with('erreur', 'Impossible de supprimer son propre utilisateur.');
         }
         return redirect()->route('administrateur.liste-utilisateurs');
     }

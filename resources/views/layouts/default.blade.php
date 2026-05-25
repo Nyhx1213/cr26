@@ -17,6 +17,18 @@
       @include('includes.header')
     </header>
 
+    @if(session('success'))
+      <div id="popup-success" class="popup popup-success">
+          {{ session('success') }}
+      </div>
+    @endif
+
+    @if(session('erreur'))
+        <div id="popup-erreur" class="popup popup-erreur">
+            {{ session('erreur') }}
+        </div>
+    @endif
+
     <main id="main" role="main">
       @yield('content')
     </main>
@@ -26,3 +38,12 @@
 </body>
 </html>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    setTimeout(function() {
+        const success = document.getElementById('popup-success');
+        const erreur = document.getElementById('popup-erreur');
+        
+        if (success) success.style.display = 'none';
+        if (erreur) erreurr.style.display = 'none';
+    }, 6000);
+</script>

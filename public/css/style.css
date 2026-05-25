@@ -276,3 +276,18 @@ footer {
 .footer {
     color: white !important;
 }
+
+.popup {
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin: 10px 0;
+    font-size: 14px;
+}
+
+.popup-success {
+    background-color: #d4edda;
+}
+
+.popup-error {
+    background-color: #f8d7da;
+}
