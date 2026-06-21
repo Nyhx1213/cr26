@@ -1,0 +1,2 @@
+administrateur@example.org : fQwJxqjoSD74EY   // Administrateur
+remy.dub@example.org : pSME78MMm8P4uY         // Utilisateur
